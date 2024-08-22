@@ -95,7 +95,11 @@ class wzry_figure:
         # 回忆礼册
         self.大厅回忆礼册 = Template(r"tpl1723334115249.png", record_pos=(0.206, 0.244), resolution=(960, 540))
         self.礼册记忆碎片 = Template(r"tpl1723334128219.png", record_pos=(0.355, 0.222), resolution=(960, 540))
-
+        #
+        self.大厅祈愿 = []
+        self.大厅祈愿.append(Template(r"tpl1724317603873.png", record_pos=(0.443, -0.105), resolution=(960, 540)))
+        self.大厅祈愿.append(Template(r"tpl1724316019439.png", record_pos=(0.444, -0.107), resolution=(960, 540)))
+        self.大厅祈愿.append(Template(r"tpl1724317814073.png", record_pos=(0.442, -0.103), resolution=(960, 540)))
         # 开始图标和登录图标等很接近, 不要用于房间判断
         self.房间中的开始按钮图标 = []
         self.房间中的开始按钮图标.append(Template(r"tpl1689666117573.png", record_pos=(0.096, 0.232), resolution=(960, 540), threshold=0.9))
@@ -740,20 +744,16 @@ class wzry_task:
             return True
         #
         times = times+1
-        savepos = True
-        if times < 5:  # 2,3,4
-            savepos = True
-        else:
-            savepos = False
+        if times > 5:  # 2,3,4
             for delstr in list(set(self.Tool.var_dict.keys()) & set(["大厅对战", "5v5王者峡谷", "进入人机匹配"])):
                 del self.Tool.var_dict[delstr]
-        if not self.Tool.existsTHENtouch(self.图片.大厅对战图标, "大厅对战", savepos=savepos):
+        if not self.Tool.existsTHENtouch(self.图片.大厅对战图标, "大厅对战", savepos=True):
             return self.单人进入人机匹配房间(times)
         sleep(2)
-        if not self.Tool.existsTHENtouch(self.图片.进入5v5匹配, "5v5王者峡谷", savepos=savepos):
+        if not self.Tool.existsTHENtouch(self.图片.进入5v5匹配, "5v5王者峡谷", savepos=True):
             return self.单人进入人机匹配房间(times)
         sleep(2)
-        if not self.Tool.existsTHENtouch(self.图片.进入人机匹配, "进入人机匹配", savepos=savepos):
+        if not self.Tool.existsTHENtouch(self.图片.进入人机匹配, "进入人机匹配", savepos=True):
             return self.单人进入人机匹配房间(times)
         sleep(2)
         #
@@ -1413,23 +1413,24 @@ class wzry_task:
         return
 
     def 回忆礼册(self, times=0):
-        self.进入大厅()
         # 本函数作为快速礼包的模板
         # 其他函数都可以借鉴此函数的开头进行优化@todo
         times = times+1
         savepos = True
         if times > 10:
             return False
-        elif times < 4:  # 1,2,3
-            savepos = True
-        else:
-            savepos = False
+        elif times > 4:  # 1,2,3
+            if not connect_status():
+                self.Tool.touch同步文件(self.Tool.独立同步文件)
+                return False
             for delstr in list(set(self.Tool.var_dict.keys()) & set(["大厅回忆礼册", "礼册记忆碎片"])):
                 del self.Tool.var_dict[delstr]
-        if not self.Tool.existsTHENtouch(self.图片.大厅回忆礼册, "大厅回忆礼册", savepos=savepos):
+        #
+        self.进入大厅()
+        if not self.Tool.existsTHENtouch(self.图片.大厅回忆礼册, "大厅回忆礼册", savepos=True):
             return self.回忆礼册(times)
         sleep(2)
-        if not self.Tool.existsTHENtouch(self.图片.礼册记忆碎片, "礼册记忆碎片", savepos=savepos):
+        if not self.Tool.existsTHENtouch(self.图片.礼册记忆碎片, "礼册记忆碎片", savepos=True):
             return self.回忆礼册(times)
         sleep(2)
         金色一键领取 = Template(r"tpl1723334141060.png", record_pos=(0.294, 0.198), resolution=(960, 540))
@@ -1548,81 +1549,49 @@ class wzry_task:
             TimeECHO(f"领取每日礼包失败")
         return True
 
-    def 玉镖夺魁(self, times=1):
-        self.进入大厅()
-        #
-        # 玉镖夺魁
-        TimeECHO(f":玉镖夺魁{times}")
-        #
-        if times % 4 == 3:
+    def 玉镖夺魁(self, times=0):
+        times = times+1
+        TimeECHO(f"玉镖夺魁{times}")
+        if times > 10:
+            return False
+        elif times > 4:  # 1,2,3
             if not connect_status():
                 self.Tool.touch同步文件(self.Tool.独立同步文件)
                 return False
-        if times > 10:
-            return False
+            for delstr in list(set(self.Tool.var_dict.keys()) & set(["大厅祈愿", "玉镖夺魁入口"])):
+                del self.Tool.var_dict[delstr]
         #
-        if times == 1:
-            self.Tool.timelimit(timekey="玉镖夺魁", limit=60*5, init=True)
-        else:
-            if self.Tool.timelimit(timekey="玉镖夺魁", limit=60*5, init=False):
-                TimeECHO(f"玉镖夺魁{times}超时退出")
-                return False
+        self.进入大厅()
+        if "大厅祈愿" not in self.Tool.var_dict.keys():
+            存在大厅祈愿, self.图片.大厅祈愿 = self.Tool.存在任一张图(self.图片.大厅祈愿, "大厅祈愿")
+            if not 存在大厅祈愿:
+                TimeECHO(f"玉镖夺魁: 找不到祈愿入口")
+                return self.玉镖夺魁(times)
+        if not self.Tool.existsTHENtouch(self.图片.大厅祈愿[0], "大厅祈愿", savepos=True):
+            return self.玉镖夺魁(times)
+        sleep(10)
+        玉镖夺魁入口 = Template(r"tpl1724316055269.png", record_pos=(-0.436, -0.154), resolution=(960, 540))
+        if not self.Tool.existsTHENtouch(玉镖夺魁入口, "玉镖夺魁入口", savepos=True):
+            return self.玉镖夺魁(times)
+        sleep(10)
+        夺魁页面元素 = []
+        夺魁页面元素.append(Template(r"tpl1724316071716.png", record_pos=(-0.045, -0.218), resolution=(960, 540)))
+        夺魁页面元素.append(Template(r"tpl1724316082074.png", record_pos=(-0.009, -0.183), resolution=(960, 540)))
+        夺魁页面元素.append(Template(r"tpl1724316089651.png", record_pos=(0.274, -0.045), resolution=(960, 540)))
+        存在夺魁页面, 夺魁页面元素 = self.Tool.存在任一张图(夺魁页面元素, "夺魁页面")
+        if not 存在夺魁页面:
+            # 随机点击
+            TimeECHO(f"玉镖夺魁: 随机点击")
+            for randomstr in list(self.Tool.var_dict.keys())[:5]:
+                self.Tool.existsTHENtouch(玉镖夺魁入口, randomstr, savepos=True)
+                sleep(2)
         #
-        times = times+1
-        #
-        # 开始寻找入口
-        图标 = Template(r"tpl1700803051511.png", record_pos=(0.379, -0.172), resolution=(960, 540))
-        if self.Tool.existsTHENtouch(图标, "玉镖夺魁"):
-            TimeECHO("从大厅进入玉镖夺魁")
-        else:
-            TimeECHO("找不到玉镖夺魁图标:尝试切换入口")
-            活动图标 = Template(r"tpl1701428211463.png", record_pos=(0.463, -0.089), resolution=(960, 540))
-            礼包图标 = Template(r"tpl1701428223494.png", record_pos=(-0.442, -0.101), resolution=(960, 540))
-            夺镖活动 = Template(r"tpl1701428233468.png", record_pos=(-0.354, 0.16), resolution=(960, 540))
-            参与按钮 = Template(r"tpl1701428241862.png", record_pos=(0.08, 0.216), resolution=(960, 540))
-            if not self.Tool.existsTHENtouch(活动图标, "夺魁_活动图标"):
-                TimeECHO("找不到活动图标:重新夺魁")
-                return self.玉镖夺魁(times)
-            sleep(5)
-            if not self.Tool.existsTHENtouch(礼包图标, "夺魁_礼包图标"):
-                TimeECHO("找不到礼包图标:重新夺魁")
-                return self.玉镖夺魁(times)
-            sleep(5)
-            #
-            夺镖位置 = []
-            夺镖位置.append(Template(r"tpl1704087360602.png", record_pos=(-0.403, 0.116), resolution=(960, 540), target_pos=6))
-            夺镖位置.append(Template(r"tpl1704087510800.png", record_pos=(-0.4, -0.099), resolution=(960, 540), target_pos=6))
-            夺镖位置.append(Template(r"tpl1704087522398.png", record_pos=(-0.397, -0.024), resolution=(960, 540), target_pos=6))
-            pos = False
-            for 夺镖位置_i in range(len(夺镖位置)):
-                pos = exists(夺镖位置[夺镖位置_i])
-                if pos:
-                    TimeECHO(f"找到活动滑动按钮{夺镖位置_i}")
-                    break
-                else:
-                    TimeECHO(f"寻找活动滑动按钮中{夺镖位置_i}")
-            if not pos:
-                return self.玉镖夺魁(times)
-            参与位置 = False
-            for i in range(10):
-                sleep(1)
-                TimeECHO(f"寻找参与投镖按钮中{i}")
-                trypos = exists(参与按钮)
-                if self.Tool.existsTHENtouch(夺镖活动, "夺镖活动入口"):
-                    TimeECHO(f"找到夺镖活动页面,寻找投镖入口")
-                    参与位置 = exists(参与按钮)
-                if trypos:
-                    参与位置 = trypos
-                if 参与位置:
-                    break
-                TimeECHO(f"滑动页面寻找......")
-                swipe(pos, vector=[0.0, -0.5])
-            #
-            if not 参与位置:
-                TimeECHO("没找到夺镖活动入口")
-                return self.玉镖夺魁(times)
-            else:
-                touch(参与位置)
+        if not self.Tool.existsTHENtouch(玉镖夺魁入口, "玉镖夺魁入口", savepos=True):
+            return self.玉镖夺魁(times)
+        存在夺魁页面, 夺魁页面元素 = self.Tool.存在任一张图(夺魁页面元素, "夺魁页面")
+        if not 存在夺魁页面:
+            return self.玉镖夺魁(times)
+        # 王者本次更新，会自动领取，不用手动点击加号
         TimeECHO("开始签到夺标")
         #
         领取加号 = []
@@ -1647,16 +1616,16 @@ class wzry_task:
         TimeECHO(f":对战友情币")
         if not self.Tool.existsTHENtouch(Template(r"tpl1700454802287.png", record_pos=(0.242, -0.251), resolution=(960, 540)), "友情双人入口"):
             return
-            sleep(5)
+        sleep(5)
         if not self.Tool.existsTHENtouch(Template(r"tpl1700454817255.png", record_pos=(-0.447, 0.166), resolution=(960, 540)), "友情文字入口"):
             return
-            sleep(5)
+        sleep(5)
         self.Tool.existsTHENtouch(Template(r"tpl1700454833319.png", record_pos=(0.416, 0.011), resolution=(960, 540)), "多次任务领取")
         self.Tool.existsTHENtouch(Template(r"tpl1700454842665.png", record_pos=(0.001, 0.163), resolution=(960, 540)), "确定领取友情币")
         # 奖励兑换
         if not self.Tool.existsTHENtouch(Template(r"tpl1700454852769.png", record_pos=(-0.332, 0.191), resolution=(960, 540)), "奖励兑换按钮"):
             return
-            sleep(5)
+        sleep(5)
         # 积分
         if self.Tool.existsTHENtouch(Template(r"tpl1700454863912.png", record_pos=(-0.124, -0.004), resolution=(960, 540)), "积分夺宝券"):
             sleep(5)
