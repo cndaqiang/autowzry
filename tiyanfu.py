@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# autowzry · 农活自动化助手
+# autowzry · 自动化农活演示
 # Copyright (C) 2025 cndaqiang
 #
 # This program is free software: you can redistribute it and/or modify

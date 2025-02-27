@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# autowzry · 农活自动化助手
+# autowzry · 自动化农活演示
 # Copyright (C) 2025 cndaqiang
 # 
 # This program is free software: you can redistribute it and/or modify
@@ -22,7 +22,7 @@ try:
     from setuptools import setup, find_packages
 except:
     print("注意本脚本是用于打包autowzry项目, 发布到pypi")
-    print("若是运行本助手, 请根据手册运行wzry.py")
+    print("若是运行演示代码, 请根据手册运行wzry.py")
 
 setup(
     name='autowzry',
@@ -36,7 +36,7 @@ setup(
     # 示例：'2.3.0a1' 表示 2.3.0 的第 1 个 Alpha 测试版
     author='cndaqiang',
     author_email='who@cndaqiang.ac.cn',
-    description='自动化农活脚本',
+    description='自动化农活演示',
     long_description=open('README.md', encoding='utf-8').read(),  # 从 autowzry/README.md 读取 long description
     long_description_content_type='text/markdown',
     packages=find_packages(),  # 自动查找所有子包
