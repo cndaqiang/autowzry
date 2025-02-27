@@ -3,11 +3,6 @@ description: 运行wzry.py过程遇到的各种问题
 title: "[windows][雷电模拟器][问题描述]"
 labels: ["安装配置","模拟器","对战","礼包","组队"]
 body:
-  - type: markdown
-    attributes:
-      value: |
-        - 🥰请再阅读完[使用文档( https://cndaqiang.github.io/wzry.doc )后, 礼貌**友善**的提问.
-        - ✨为本项目点个star, 我会更愉快的回答你的问题.
   - type: checkboxes
     attributes:
       label: "请在阅读完下面的内容后再进行提问:"
@@ -16,10 +11,15 @@ body:
         - label: "🌱已阅读[使用文档]( https://cndaqiang.github.io/wzry.doc )"
         - label: "🌱已阅读[常见问题]( https://cndaqiang.github.io/wzry.doc/qa/qa )"
         - label: "🌱已观看[视频教程]( https://www.bilibili.com/video/BV1JmcteBEUS )"
+  - type: markdown
+    attributes:
+      value: |
+        - 🥰请礼貌**友善**的提问.
+        - ✨为本项目点个star, 我会更愉快的回答你的问题.
   - type: textarea
     id: other_version
     attributes:
-      label: "助手版本"
+      label: "软件版本"
       description: |
         - 请尽可能的使用最新的[stable版本]( https://github.com/cndaqiang/autowzry/releases )
         - 请尽可能的升级airtest_mobileauto`python -m pip install airtest_mobileauto --upgrade`
@@ -27,7 +27,7 @@ body:
       value: |
         [此处支持: 填写文本、上传文件、粘贴截图]
         # 例如
-        WZRY-2.8.1
+        autowzry-2.8.1
         airtest-mobileauto 2.1.7
   - type: textarea
     attributes:
