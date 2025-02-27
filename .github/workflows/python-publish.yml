@@ -24,6 +24,7 @@ jobs:
     - name: Create autowzry folder and mv files
       run: |
         # 写死了, 把创建pypi的文件复制到autowzry
+        git checkout dev
         rm -rf autowzry
         mkdir  autowzry
         mv assets autowzry/
