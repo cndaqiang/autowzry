@@ -1389,12 +1389,12 @@ class wzry_task:
                         找到取消按钮, self.图片.房间中的取消按钮图标 = self.Tool.存在任一张图(self.图片.房间中的取消按钮图标, "房间中的取消准备按钮")
                         if not 找到取消按钮:
                             TimeECHO("进入房间失败,可能是今日更新太频繁,版本不一致无法进房,需要重新登录更新")
-                            TimeECHO("也可能<房主头像>截图区域不合适, 详见手册 https://autowzry.cndaqiang.ac.cn/guide/zudui/")
+                            TimeECHO("也可能<房主头像>截图区域不合适, 详见手册")
                 else:
                     TimeECHO("未找到组队房间,检测主节点登录状态")
                 if not 找到取消按钮:
                     TimeECHO("没有找到取消按钮，王者最近可能有活动更新了图标")
-                    TimeECHO("检查页面是否有图片更新 https://autowzry.cndaqiang.ac.cn/guide/upfig/")
+                    TimeECHO("检查页面是否有图片更新")
                     TimeECHO("更新后可以加速匹配速度")
 
         self.Tool.barriernode(self.mynode, self.totalnode, "结束组队进房间")
@@ -1632,7 +1632,7 @@ class wzry_task:
             点击此处继续 = Template(r"tpl1727232003870.png", record_pos=(-0.002, 0.203), resolution=(960, 540))
             if self.Tool.timelimit(timekey="结束人机匹配", limit=60*20 + addtime, init=False, reset=False):
                 self.Tool.touch_record_pos(点击此处继续.record_pos, resolution=self.移动端.resolution, keystr=f"{fun_name(1)}.十分钟一次的点击")
-                TimeECHO(f"⚠️ 警告: 若脚本长期卡在点击此处继续, 请检查是否应该更新资源: https://autowzry.cndaqiang.ac.cn/guide/upfig/")
+                TimeECHO(f"⚠️ 警告: 若脚本长期卡在点击此处继续, 请检查是否应该更新资源")
             # 对战阶段，处理对战
             if self.判断对战中(处理=self.触摸对战):
                 initloop = False
@@ -3517,7 +3517,7 @@ class wzry_task:
                 TimeECHO(f"默认运行逻辑为:优先进行星耀快速对战, 再星耀达到上限后自动转为青铜模式, 并持续对战到凌晨.")
                 TimeECHO(f"默认固定英雄,不开启礼包功能")
                 TimeECHO(f"如果希望实现: 自动选择熟练度低的英雄、开启礼包功能、进行青铜对战或者王者模拟战等对战模式")
-                TimeECHO(f"请查看手册教程: https://autowzry.cndaqiang.ac.cn/guide/file/")
+                TimeECHO(f"请查看手册教程")
                 TimeECHO(f"<<<"*20)
             # ------------------------------------------------------------------------------
             # 下面就是正常的循环流程了

@@ -11,10 +11,7 @@
 </div>
 
 <div align="center">
-使用方法, 请访问: <a href="https://autowzry.cndaqiang.ac.cn/">安装指南</a>|<a href="https://autowzry.pages.dev/guide/install/">备用指南</a>|<a href="https://www.bilibili.com/video/BV1JmcteBEUS">视频教程</a>.
-<br/>
-遇到问题, 请在提问前查看: <a href="https://autowzry.cndaqiang.ac.cn/qa/qa/">常见问题</a>.
-<br/>
+使用方法请访问: <a href="https://autowzry.pages.dev/guide/install/">安装指南</a> | <a href="https://autowzry.cndaqiang.ac.cn/">备用指南</a> (手册密码: autowzry)
 </div>
 
 ## 免责声明

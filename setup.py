@@ -17,10 +17,12 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-# 注意本脚本是用于打包autowzry项目, 发布到https://pypi.org/project/autowzry/
-# 若是运行本助手, 请根据手册https://autowzry.cndaqiang.ac.cn/guide/install/运行wzry.py
 
-from setuptools import setup, find_packages
+try:
+    from setuptools import setup, find_packages
+except:
+    print("注意本脚本是用于打包autowzry项目, 发布到pypi")
+    print("若是运行本助手, 请根据手册运行wzry.py")
 
 setup(
     name='autowzry',
