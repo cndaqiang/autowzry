@@ -5,8 +5,8 @@ labels: ["安装配置","模拟器","对战","礼包","组队"]
 body:
   - type: checkboxes
     attributes:
-      label: "请在阅读完下面的内容后再进行提问:"
-      description: "提问题前先阅读[使用文档( https://cndaqiang.github.io/wzry.doc )."
+      label: "请在完成下面的内容后再进行提问:"
+      description: "提问题前先阅读使用文档, 文档的访问密码为 `autowzry`"
       options:
         - label: "🌱已阅读[使用文档]( https://cndaqiang.github.io/wzry.doc )"
         - label: "🌱已阅读[常见问题]( https://cndaqiang.github.io/wzry.doc/qa/qa )"
