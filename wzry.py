@@ -378,7 +378,7 @@ class wzry_task:
         # ------------------------------------------------------------------------------
         # DQWheel 框架的初始化
         if self.房主:
-            self.免责声明()
+            self.项目介绍()
             self.Tool.init_clean()
         # 强制同步
         if self.totalnode_bak > 1:
@@ -486,19 +486,34 @@ class wzry_task:
             setattr(self, key, value)
         self.构建循环参数(self.本循环参数)
 
-    # 免责声明
-    def 免责声明(self):
-        # 免责声明信息
-        免责content = [">"*20,
-                     "autowzry是基于 airtest-mobileauto 开发的农活自动化免费开源脚本，旨在简化和自动化游戏中的日常操作。",
-                     "该工具通过图像识别和模拟人手点击的方式，实现了对游戏的自动化交互，完全遵循游戏的用户界面，不涉及任何对游戏文件或代码的修改。",
-                     "虽然理论上没有封号风险，但由于自动化脚本的性质，使用本项目的后果需由用户自行承担。请确保您了解并同意这一点后再使用本工具。",
-                     "本项目完全免费，且未在任何平台或渠道提供付费服务或收费支持。请勿相信任何形式的收费信息。",
-                     "项目主页: https://github.com/cndaqiang/autowzry",
+    # 项目介绍@todo使用base64混淆这段声明并执行,避免本项目被用于商业用途或搜索引擎捕获
+    # info = 'TimeECHO("输出信息"')
+    # encoded_code = base64.b64encode(info.encode("utf-8")).decode("utf-8")
+    # decoded_code = base64.b64decode(encoded_code).decode("utf-8")
+    # exec(decoded_code)
+    # 加密普通文件
+    def 项目介绍(self):
+        # 项目介绍信息
+        # info
+        encoded_code = 'IumhueebruS4u+mhtTogaHR0cHM6Ly9naXRodWIuY29tL2NuZGFxaWFuZy9hdXRvd3pyeSAKIOi/kOihjOaVmeeoiyjorr/pl67lr4bnoIE6IGF1dG93enJ5KTpodHRwczovL2F1dG93enJ5LnBhZ2VzLmRldi9ndWlkZS9pbnN0YWxsLyI='
+        try:
+            import base64
+            decoded_code = base64.b64decode(encoded_code).decode("utf-8")
+        except:
+            decoded_code = "缺少base64库.无法展示相关内容"
+        #
+        介绍content = [">"*20,
+                     "autowzry基于airtest-mobileauto开发，本项目仅为自动化技术演示，旨在展示技术原理和应用，并非游戏辅助工具。",
+                     "请勿使用本项目示例代码或技术方案开发任何违反游戏用户协议的工具或应用。",
+                     "使用本项目或基于本项目开发的内容所产生的一切法律责任由使用者自行承担。",
+                     "请遵守游戏用户协议，避免任何可能影响其他玩家游戏体验的行为。",
+                     "本项目完全免费，请警惕任何收费信息。",
+                     "本项目无任何交流群组，请在GitHub交流。",
+                     decoded_code,
                      "<"*20
                      ]
         content = "\n\n"
-        for i in 免责content:
+        for i in 介绍content:
             content += i+"\n"
         TimeECHO(content)
         sleep(1)
