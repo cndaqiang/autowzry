@@ -491,11 +491,12 @@ class wzry_task:
     # encoded_code = base64.b64encode(info.encode("utf-8")).decode("utf-8")
     # decoded_code = base64.b64decode(encoded_code).decode("utf-8")
     # exec(decoded_code)
+    # 普通字串 info="字符串内容", 不用额外加'了
     # 加密普通文件
     def 项目介绍(self):
         # 项目介绍信息
         # info
-        encoded_code = 'IumhueebruS4u+mhtTogaHR0cHM6Ly9naXRodWIuY29tL2NuZGFxaWFuZy9hdXRvd3pyeSAKIOi/kOihjOaVmeeoiyjorr/pl67lr4bnoIE6IGF1dG93enJ5KTpodHRwczovL2F1dG93enJ5LnBhZ2VzLmRldi9ndWlkZS9pbnN0YWxsLyI='
+        encoded_code = '6aG555uu5Li76aG1OiBodHRwczovL2dpdGh1Yi5jb20vY25kYXFpYW5nL2F1dG93enJ5IAog6L+Q6KGM5pWZ56iLKOiuv+mXruWvhueggTogYXV0b3d6cnkpOmh0dHBzOi8vYXV0b3d6cnkucGFnZXMuZGV2L2d1aWRlL2luc3RhbGwv'
         try:
             import base64
             decoded_code = base64.b64decode(encoded_code).decode("utf-8")
