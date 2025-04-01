@@ -37,8 +37,9 @@ except ImportError:
     print("python -m pip install airtest_mobileauto --upgrade")
     raise ImportError("模块 [airtest_mobileauto] 导入失败")
 
-updata="2025年03月27日"
-version=None
+updata = "2025年03月27日"
+version = None
+
 
 class wzry_runinfo:
     # 备注
@@ -63,7 +64,7 @@ class wzry_runinfo:
         TimeECHO(f"\t 房主 = {str(self.房主)}")
         TimeECHO(f"\t 对战模式 = {str(self.对战模式)}")
         TimeECHO(f"\t 对战时间 = [{str(self.对战时间[0])},{str(self.对战时间[1])}]")
-        TimeECHO(f"\t 限时组队时间 = {str(round(self.限时组队时间,2))}")
+        TimeECHO(f"\t 限时组队时间 = {str(round(self.限时组队时间, 2))}")
         TimeECHO(f"\t runstep = {str(self.runstep)}")
         TimeECHO(f"\t jinristep = {str(self.jinristep)}")
         TimeECHO(f"\t 青铜段位 = {str(self.青铜段位)}")
@@ -406,15 +407,15 @@ class wzry_task:
         self.无法进行组队FILE = f"WZRY.无法进行组队FILE.txt"  # 各种原因导致的无法进行组队
         self.重新登录FILE = f"WZRY.{self.mynode}.重新登录FILE.txt"  # 账号下线时创建
         #
-        TimeECHO(f"  self.触摸对战FILE      =     {    self.触摸对战FILE     }")
-        TimeECHO(f"  self.调试文件FILE      =     {    self.调试文件FILE     }")
-        TimeECHO(f"  self.运行模式FILE      =     {    self.运行模式FILE     }")
-        TimeECHO(f"  self.无法进行组队FILE  =     {    self.无法进行组队FILE }")
-        TimeECHO(f"  self.重新登录FILE      =     {    self.重新登录FILE     }")
-        TimeECHO(f"  self.Tool.辅助同步文件 =     {    self.Tool.辅助同步文件 }")
-        TimeECHO(f"  self.Tool.独立同步文件 =     {    self.Tool.独立同步文件 }")
-        TimeECHO(f"  self.Tool.stopfile    =     {    self.Tool.stopfile     }")
-        TimeECHO(f"  self.重新登录FILE      =     {    self.重新登录FILE     }")
+        TimeECHO(f"  self.触摸对战FILE      =     {self.触摸对战FILE}")
+        TimeECHO(f"  self.调试文件FILE      =     {self.调试文件FILE}")
+        TimeECHO(f"  self.运行模式FILE      =     {self.运行模式FILE}")
+        TimeECHO(f"  self.无法进行组队FILE  =     {self.无法进行组队FILE}")
+        TimeECHO(f"  self.重新登录FILE      =     {self.重新登录FILE}")
+        TimeECHO(f"  self.Tool.辅助同步文件 =     {self.Tool.辅助同步文件}")
+        TimeECHO(f"  self.Tool.独立同步文件 =     {self.Tool.独立同步文件}")
+        TimeECHO(f"  self.Tool.stopfile    =     {self.Tool.stopfile}")
+        TimeECHO(f"  self.重新登录FILE      =     {self.重新登录FILE}")
         #
         self.初始化(init=True)
         # 自定义参数可以通过self.设置参数() 插入
@@ -1926,14 +1927,13 @@ class wzry_task:
         #
         # 正常情况
         return True
-    
+
     def 王者礼包_点击继续(self):
         # S39赛季更新, 领取礼包后不再是点击黄色的确定按钮,而是点击屏幕继续
         sleep(5)
         # 屏幕右下角
         self.Tool.touch_record_pos(record_pos=(0.321, 0.226), resolution=self.移动端.resolution, keystr=f"{fun_name(1)}.屏幕中心")
         sleep(5)
-
 
     def 王者礼包(self):
         TimeECHO(f"当前[{fun_name()}]功能仅适配至[{updata}],后续时间可能无法使用")
@@ -2066,6 +2066,15 @@ class wzry_task:
         返回 = Template(r"tpl1694442171115.png", record_pos=(-0.441, -0.252), resolution=(960, 540))
         self.Tool.LoopTouch(返回, "返回")
         return True
+    def 战令礼包(self,times=0):
+        #todo 仅需点击一键领取
+        pass
+    def 灵宝礼包(self,times=0):
+        #todo 与灵宝互动区分开,灵宝礼包包含多个礼包入口
+        pass
+    def 礼册礼包(self,times=0):
+        #todo 礼包功能改版
+        pass
 
     def 回忆礼册(self, times=0):
         TimeECHO(f"自S39赛季更新, 该[{fun_name()}]功能停止维护")
@@ -2514,7 +2523,6 @@ class wzry_task:
             if self.Tool.existsTHENtouch(Template(r"tpl1700454996867.png", record_pos=(-0.099, 0.166), resolution=(960, 540)), "蓝色确定兑换"):
                 sleep(5)
             self.Tool.existsTHENtouch(返回图标, "友情礼包返回图标", savepos=True)
-
 
     def KPL每日观赛(self, times=0, 观赛时长=20*60):
         TimeECHO(f"自S39赛季更新, 该[{fun_name()}]功能停止维护")
@@ -3152,6 +3160,8 @@ KPL观赛入口: !!python/tuple
                         if self.对战模式 in ["火焰山"]:
                             x = random.random()/2-0.25
                             y = random.random()/2-0.25
+                            if i > 2: #火焰山移动不要太多,容易死掉
+                                break
                     swipe(移动pos, vector=[x, y])
                     #
                     if 普攻pos:
@@ -3217,13 +3227,15 @@ KPL观赛入口: !!python/tuple
             移动poskey = f"移动pos({self.mynode})"
             普攻poskey = f"普攻pos({self.mynode})"
             vector = [0.2, -0.2]
+            移动次数 = 5
             if self.对战模式 in ["火焰山"]:
                 vector = [random.random()/2.0-0.25, random.random()/2.0-0.25]
                 self.Tool.touch_record_pos(record_pos=self.图片.对战火球按钮.record_pos, resolution=self.移动端.resolution, keystr="火焰山火球")
+                移动次数 = 1  # 火焰山移动太多容易死掉
             if 移动poskey in self.Tool.var_dict.keys():
                 TimeECHO(f"{self.对战模式}:无脑移动保护信誉分中....")
                 移动pos = self.Tool.var_dict[移动poskey]
-                for i in range(5):
+                for i in range(移动次数):
                     swipe(移动pos, vector=vector)
             elif 普攻poskey in self.Tool.var_dict.keys():
                 touch(self.Tool.var_dict[普攻poskey])
@@ -3441,7 +3453,7 @@ KPL观赛入口: !!python/tuple
             # 修正分辨率, 避免某些模拟器返回的分辨率不对
             if self.移动端.resolution[0] < self.移动端.resolution[1]:
                 TimeECHO("=>"*20)
-                TimeECHO(f"⚠️ 警告: 分辨率 ({ self.移动端.resolution}) 不符合 (宽, 高) 格式，已进行修正...")
+                TimeECHO(f"⚠️ 警告: 分辨率 ({self.移动端.resolution}) 不符合 (宽, 高) 格式，已进行修正...")
                 self.移动端.resolution = (max(self.移动端.resolution), min(self.移动端.resolution))
                 TimeECHO("<="*20)
             # ------------------------------------------------------------------------------
@@ -3755,7 +3767,7 @@ KPL观赛入口: !!python/tuple
                     TimeECHO(f"警告: 不建议星耀难度开启TOUCH模式")
                 if not self.青铜段位 and self.Tool.var_dict["运行参数.青铜段位"]:
                     TimeECHO(f"警告: 检测到对战达到星耀对战上限, 但仍将依据 self.青铜段位 = {self.青铜段位} 尝试进行星耀对战")
-            if self.对战模式 not in ["人机闯关","5v5匹配"]:
+            if self.对战模式 not in ["人机闯关", "5v5匹配"]:
                 TimeECHO(f"自S39赛季更新, [{self.对战模式}]模式停止维护, 请自行检查可用情况")
             if self.组队模式:
                 TimeECHO(f"自S39赛季更新,组队停止维护, 请自行检查可用情况")
