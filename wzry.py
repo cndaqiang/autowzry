@@ -2070,6 +2070,8 @@ class wzry_task:
     def 回忆礼册(self, times=0):
         TimeECHO(f"自S39赛季更新, 该[{fun_name()}]功能停止维护")
         TimeECHO(f"王者临时关闭了入口,无法维护")
+        TimeECHO(f"自S39赛季更新以来, 该[{fun_name()}]功能暂时无法使用, 请等待更新")
+        TimeECHO(f"礼册系统和战令系统进行了重组, 均需要继续开发")
         return
         #
         # 本函数作为快速礼包的模板
@@ -2592,7 +2594,9 @@ KPL观赛入口: !!python/tuple
 
         #
     def 每日礼包_每日任务(self, times=0):
-        TimeECHO(f"当前[{fun_name()}]功能仅适配至[{updata}],后续时间可能无法使用")
+        TimeECHO(f"自S39赛季更新以来, 该[{fun_name()}]功能暂时无法使用, 请等待更新")
+        TimeECHO(f"每日任务转移到了礼册系统")
+        return
         #
         if not self.check_run_status():
             return True
@@ -2789,7 +2793,7 @@ KPL观赛入口: !!python/tuple
 
         # 妲己礼物
     def 每日礼包_妲己礼物(self, times=0):
-        TimeECHO(f"自S39赛季更新依赖, 该[{fun_name()}]功能暂时无法使用, 请等待更新")
+        TimeECHO(f"自S39赛季更新以来, 该[{fun_name()}]功能暂时无法使用, 请等待更新")
         return
         """
         妲己领礼包入口已被王者关停，无法领取
