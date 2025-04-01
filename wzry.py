@@ -2066,14 +2066,17 @@ class wzry_task:
         返回 = Template(r"tpl1694442171115.png", record_pos=(-0.441, -0.252), resolution=(960, 540))
         self.Tool.LoopTouch(返回, "返回")
         return True
-    def 战令礼包(self,times=0):
-        #todo 仅需点击一键领取
+
+    def 战令礼包(self, times=0):
+        # todo 仅需点击一键领取
         pass
-    def 灵宝礼包(self,times=0):
-        #todo 与灵宝互动区分开,灵宝礼包包含多个礼包入口
+
+    def 灵宝礼包(self, times=0):
+        # todo 与灵宝互动区分开,灵宝礼包包含多个礼包入口
         pass
-    def 礼册礼包(self,times=0):
-        #todo 礼包功能改版
+
+    def 礼册礼包(self, times=0):
+        # todo 礼包功能改版
         pass
 
     def 回忆礼册(self, times=0):
@@ -3160,8 +3163,6 @@ KPL观赛入口: !!python/tuple
                         if self.对战模式 in ["火焰山"]:
                             x = random.random()/2-0.25
                             y = random.random()/2-0.25
-                            if i > 2: #火焰山移动不要太多,容易死掉
-                                break
                     swipe(移动pos, vector=[x, y])
                     #
                     if 普攻pos:
@@ -3176,6 +3177,9 @@ KPL观赛入口: !!python/tuple
                         if 普攻pos:
                             sleep(0.2)
                         touch(普攻pos)
+                    # 火焰山反向移动,避免死掉
+                    if self.对战模式 in ["火焰山"]:
+                        swipe(移动pos, vector=[-x*0.5, -y*0.5])
                     #
                     # 人人模式随机点向上走走, 去吃对面小兵的伤害
                     if random.randint(1, 5) == 1 and self.对战模式 in ["1v1人人", "3v3匹配"]:
