@@ -139,9 +139,10 @@ class wzry_figure:
         self.开始1v1游戏 = Template(r"tpl1739614855139.png", record_pos=(0.427, 0.245), resolution=(960, 540))
 
         # 回忆礼册
-        self.大厅回忆礼册 = Template(r"tpl1723334115249.png", record_pos=(0.206, 0.244), resolution=(960, 540))
-        self.获取回忆之证 = Template(r"tpl1727227611850.png", record_pos=(0.428, 0.214), resolution=(960, 540))
-        self.礼册记忆碎片 = Template(r"tpl1723334128219.png", record_pos=(0.355, 0.222), resolution=(960, 540))
+        self.大厅回忆礼册 = Template(r"tpl1744184457731.png", record_pos=(0.467, 0.066), resolution=(960, 540))
+        self.礼册赢得对局 = Template(r"tpl1744184473551.png", record_pos=(0.325, 0.201), resolution=(960, 540))
+        self.礼册领取礼包 = Template(r"tpl1744184478234.png", record_pos=(0.426, 0.218), resolution=(960, 540))
+        self.礼册返回图标 = Template(r"tpl1744184504445.png", record_pos=(-0.459, -0.252), resolution=(960, 540))
         #
         self.大厅祈愿 = []
         # 这个图片基本无效, 每次活动都变, 使用record_pos记录真实的位置, 直接touch这个
@@ -1978,7 +1979,7 @@ class wzry_task:
             else:
                 TimeECHO("暂时不进行玉镖夺魁")
             if self.礼包功能_回忆礼册:
-                self.回忆礼册()
+                self.回忆礼册S39()
             # ........................................................
             if not self.王者礼包异常处理():
                 return True
@@ -2079,15 +2080,7 @@ class wzry_task:
         # todo 礼包功能改版
         pass
 
-    def 回忆礼册(self, times=0):
-        TimeECHO(f"自S39赛季更新, 该[{fun_name()}]功能停止维护")
-        TimeECHO(f"王者临时关闭了入口,无法维护")
-        TimeECHO(f"自S39赛季更新以来, 该[{fun_name()}]功能暂时无法使用, 请等待更新")
-        TimeECHO(f"礼册系统和战令系统进行了重组, 均需要继续开发")
-        return
-        #
-        # 本函数作为快速礼包的模板
-        # 其他函数都可以借鉴此函数的开头进行优化
+    def 回忆礼册S39(self, times=0):
         #
         if not self.check_run_status():
             return True
@@ -2101,40 +2094,45 @@ class wzry_task:
         if self.set_timelimit(istep=times, init=times == 0, timelimit=60*10, nstep=10):
             return True
         #
-        if times > 4:  # 1,2,3
-            for delstr in list(set(self.Tool.var_dict.keys()) & set(["大厅回忆礼册", "获取回忆之证"])):
-                del self.Tool.var_dict[delstr]
-        #
         times = times+1
         #
-        if not self.Tool.existsTHENtouch(self.图片.大厅回忆礼册, "大厅回忆礼册", savepos=True):
-            return self.回忆礼册(times)
-        sleep(2)
-        if not self.Tool.existsTHENtouch(self.图片.获取回忆之证, "获取回忆之证", savepos=True):
-            return self.回忆礼册(times)
-        sleep(2)
-        # 如果进入唤醒界面，跳回任务界面
-        if self.Tool.existsTHENtouch(self.图片.礼册记忆碎片, "礼册记忆碎片"):
-            sleep(2)
-        金色一键领取 = Template(r"tpl1727229260477.png", record_pos=(0.394, 0.219), resolution=(960, 540))
-        灰色一键领取 = Template(r"tpl1727229241093.png", record_pos=(0.392, 0.219), resolution=(960, 540))
-        一键领取 = [金色一键领取, 灰色一键领取]
-        存在, 一键领取 = self.Tool.存在任一张图(一键领取, "礼册.一键领取", savepos=True)
-        if not 存在:
-            TimeECHO(f"{fun_name}.没检测到界面,{times}+1")
-            return self.回忆礼册(times)
-        self.Tool.existsTHENtouch(一键领取[0], "礼册.一键领取", savepos=True)
-        # .....
-        # 下面的其实不用领取，手动去背包里领取也是可以的，因此下面的代码没进行充分测试
-        self.确定按钮()  # 只有一个蓝色确定按钮，这个函数会遍历确定按钮，会拖慢一点点速度，但是10s内能结束，因此不优化了
-        自动升级 = Template(r"tpl1723334201064.png", record_pos=(0.38, -0.242), resolution=(960, 540))
-        self.Tool.LoopTouch(自动升级, "礼册.自动升级", loop=12, savepos=False)
-        self.确定按钮()
-        关闭按钮 = Template(r"tpl1723334229790.png", record_pos=(0.361, -0.194), resolution=(960, 540))
-        返回按钮 = Template(r"tpl1723334241957.png", record_pos=(-0.439, -0.25), resolution=(960, 540))
-        self.Tool.existsTHENtouch(关闭按钮, "回忆礼册关闭按钮", savepos=True)
-        self.Tool.existsTHENtouch(返回按钮, "回忆礼册返回按钮", savepos=True)
-        return
+        # 针对 960x540的分辨率, 直接点击记录的坐标
+        if max(self.移动端.resolution) == 960:
+            self.Tool.touch_record_pos(record_pos=self.图片.大厅回忆礼册.record_pos, resolution=self.移动端.resolution, keystr="大厅回忆礼册")
+        else:
+            if times > 4:  # 1,2,3
+                for delstr in list(set(self.Tool.var_dict.keys()) & set(["大厅回忆礼册"])):
+                    del self.Tool.var_dict[delstr]
+            if not self.Tool.existsTHENtouch(self.图片.大厅回忆礼册, "大厅回忆礼册", savepos=True):
+                return self.回忆礼册(times)
+        #
+        sleep(10)
+        #
+        if not exists(self.图片.礼册赢得对局):
+            TimeECHO(f"礼册: 找不到<赢得1张对战>图标, 或许进入错误界面或者礼册更新了")
+            if times < 3:
+                return self.回忆礼册(times)
+            else:
+                # 3次以后,强制领取
+                # 强制领取礼包
+                if max(self.移动端.resolution) == 960:
+                    self.Tool.touch_record_pos(record_pos=self.图片.礼册领取礼包.record_pos, resolution=self.移动端.resolution, keystr="礼册领取礼包", savepos=True)
+                else:
+                    self.Tool.existsTHENtouch(self.图片.礼册领取礼包, "礼册领取礼包", savepos=True)
+        #
+        # 领取之后,需要频繁点击屏幕,确定,为了避免出问题, 此时频繁点击右下加, 或者左上角的返回
+        for i in range(3):
+            self.Tool.existsTHENtouch(self.图片.礼册领取礼包, "礼册领取礼包", savepos=True)
+        #
+        for i in range(5):
+            self.Tool.existsTHENtouch(self.图片.礼册返回图标, "礼册返回图标", savepos=True)
+        #
+        # 如果最后在大厅就结束,不再就再点一次返回. 最后返回界面是在大厅、礼册、个人资料, 是不确定
+        if self.判断大厅中():
+            return
+        else:
+            self.Tool.existsTHENtouch(self.图片.礼册返回图标, "礼册返回图标", savepos=True)
+            return
 
     def 灵宝互动(self, times=0):
         TimeECHO(f"自S39赛季更新, 该[{fun_name()}]功能停止维护")
@@ -3177,9 +3175,12 @@ KPL观赛入口: !!python/tuple
                         if 普攻pos:
                             sleep(0.2)
                         touch(普攻pos)
-                    # 火焰山反向移动,避免死掉
+                    # 火焰山反向移动,避免死掉,存活率和击杀对面的概率已经很高了
                     if self.对战模式 in ["火焰山"]:
                         swipe(移动pos, vector=[-x*0.5, -y*0.5])
+                        if random.random() < 0.05:  # 小概率移动一下, 脱离挂机点
+                            swipe(移动pos, vector=[x, y])
+
                     #
                     # 人人模式随机点向上走走, 去吃对面小兵的伤害
                     if random.randint(1, 5) == 1 and self.对战模式 in ["1v1人人", "3v3匹配"]:
@@ -3197,10 +3198,10 @@ KPL观赛入口: !!python/tuple
             # 如果所有都点击一次, 容易在对战结束时,点到奇怪的地方, 所以这里只点一下
             if max(self.移动端.resolution) == 960:
                 # 3技能英雄点击技能
-                技能图标 = [self.图片.对战31技能, self.图片.对战32技能, self.图片.对战33技能]
-                技能图标 = 技能图标[random.randint(0, len(技能图标)-1)]
+                所有技能图标 = [self.图片.对战31技能, self.图片.对战32技能, self.图片.对战33技能]
+                技能图标 = 所有技能图标[random.randint(0, len(所有技能图标)-1)]
                 self.Tool.touch_record_pos(record_pos=技能图标.record_pos, resolution=self.移动端.resolution, keystr="对战技能图标")
-                点击按钮 = random.randint(0, 6)
+                点击按钮 = random.randint(0, 8)
                 if 点击按钮 == 0:
                     self.Tool.touch_record_pos(record_pos=self.图片.对战点赞按钮.record_pos, resolution=self.移动端.resolution, keystr="对战点赞按钮")
                 elif 点击按钮 == 1:
@@ -3213,8 +3214,9 @@ KPL观赛入口: !!python/tuple
                     self.Tool.touch_record_pos(record_pos=self.图片.对战买装备右.record_pos, resolution=self.移动端.resolution, keystr="对战买装备右")
                 elif 点击按钮 == 5:
                     self.Tool.touch_record_pos(record_pos=self.图片.对战恢复按钮.record_pos, resolution=self.移动端.resolution, keystr="对战恢复按钮")
-                elif 点击按钮 == 6:
-                    技能图标 = [self.图片.对战31技能, self.图片.对战32技能, self.图片.对战33技能]
+                elif 点击按钮 >= 6:
+                    技能图标 = 所有技能图标[点击按钮 % 3]
+                    self.Tool.touch_record_pos(record_pos=技能图标.record_pos, resolution=self.移动端.resolution, keystr="对战技能图标")
             #
             # 火焰山火球
             if self.对战模式 in ["火焰山"]:
