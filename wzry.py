@@ -88,7 +88,7 @@ class wzry_runinfo:
             TimeECHO(f"RUNINFO:对战模式变化->{str(self.对战模式)}")
             return False
         # 对战模式没变时，模拟战不用判断了
-        if self.对战模式 in ["5v5排位", "人机闯关", "模拟战", "火焰山", "1v1人人", "3v3匹配"]:
+        if self.对战模式 in ["5v5排位", "人机闯关", "模拟战", "火焰山", "梦境大乱斗", "1v1人人", "3v3匹配"]:
             return True
         #
         if "5v5匹配" in self.对战模式:
@@ -126,6 +126,7 @@ class wzry_figure:
         self.大厅娱乐模式 = Template(r"tpl1723219381063.png", record_pos=(0.243, 0.14), resolution=(960, 540))
         self.王者模拟战图标 = Template(r"tpl1693660105012.png", record_pos=(-0.255, -0.004), resolution=(960, 540))
         self.火焰山图标 = Template(r"tpl1739510136533.png", record_pos=(0.048, -0.144), resolution=(960, 540))
+        self.梦境大乱斗图标 = Template(r"tpl1744266266709.png", record_pos=(-0.258, -0.144), resolution=(960, 540))
         self.大厅排位赛 = Template(r"tpl1739510088247.png", record_pos=(0.127, 0.127), resolution=(960, 540))
         self.进入排位赛 = Template(r"tpl1739510101543.png", record_pos=(0.29, 0.181), resolution=(960, 540))
         self.进入3v3匹配 = Template(r"tpl1740191017832.png", record_pos=(0.368, 0.051), resolution=(960, 540))
@@ -1018,6 +1019,9 @@ class wzry_task:
         if "火焰山" in self.对战模式:
             TimeECHO(f"单人进入人机匹配房间_火焰山{times}")
             return self.单人进入人机匹配房间_火焰山(times)
+        if "梦境大乱斗" in self.对战模式:
+            TimeECHO(f"单人进入人机匹配房间_火焰山{times}")
+            return self.单人进入人机匹配房间_梦境大乱斗(times)
         if "5v5排位" == self.对战模式:
             TimeECHO(f"首先进入排位房间{times}")
             return self.单人进入排位房间(times)
@@ -1483,6 +1487,30 @@ class wzry_task:
                 del self.Tool.var_dict[delstr]
             return self.单人进入人机匹配房间(times)
 
+    def 单人进入人机匹配房间_梦境大乱斗(self, times=0):
+        #
+        if self.set_timelimit(istep=times, init=times == 0, timelimit=60*30, nstep=30, touch同步=True):
+            return True
+        #
+        times = times + 1
+        # 娱乐模式的位置是确定的,可以强制点击
+        if not self.Tool.existsTHENtouch(self.图片.大厅娱乐模式, "大厅娱乐模式", savepos=True):
+            self.Tool.touch_record_pos(record_pos=self.图片.大厅娱乐模式.record_pos, resolution=self.移动端.resolution, keystr=f"强制点击大厅娱乐模式")
+        sleep(10)  # 进入娱乐模式时, 很多模式的图片需要刷新出来, 多等一会
+        # 不同账户的图标位置可能有区别, 这里更新一下位置
+        self.Tool.存在任一张图([self.图片.梦境大乱斗图标], "梦境大乱斗图标", savepos=True)
+        if not self.Tool.existsTHENtouch(self.图片.梦境大乱斗图标, "梦境大乱斗图标", savepos=True):
+            self.Tool.touch_record_pos(record_pos=self.图片.梦境大乱斗图标.record_pos, resolution=self.移动端.resolution, keystr=f"强制点击火焰山图标图标")
+        sleep(5)
+        if not self.Tool.existsTHENtouch(self.图片.进入人机匹配, "梦境大乱斗图标人机", savepos=True):
+            return self.单人进入人机匹配房间(times)
+        if self.判断房间中(处理=True):
+            return True
+        else:
+            for delstr in list(set(self.Tool.var_dict.keys()) & set(["大厅娱乐模式", "梦境大乱斗图标", "梦境大乱斗图标人机"])):
+                del self.Tool.var_dict[delstr]
+            return self.单人进入人机匹配房间(times)
+
     def 进行人机匹配(self, times=0):
         # 调用此函数之前, 已经进入过房间了,此处不再进行校验
         #
@@ -1591,7 +1619,7 @@ class wzry_task:
             # 不选择英雄则多等待一会
             TimeECHO("不选择英雄, 则sleep一会")
             sleep(10)
-            if self.对战模式 in ["火焰山", "5v5排位"]:  # 火焰山等待的更久，这个参数影响开局时是否开始或者开始过识别对战，导致对战不及时
+            if self.对战模式 in ["火焰山", "梦境大乱斗", "5v5排位"]:  # 火焰山等待的更久，这个参数影响开局时是否开始或者开始过识别对战，导致对战不及时
                 sleepmax = 30
                 self.Tool.timelimit(timekey="不选择英雄", limit=sleepmax, init=True)
                 while True:
@@ -1644,7 +1672,7 @@ class wzry_task:
                 return True
             addtime = 60*10 if self.本循环参数.标准模式 else 0
             addtime = 60*20 if self.对战模式 in ["5v5排位"] else addtime
-            addtime = -60*5 if self.对战模式 in ["人机闯关", "火焰山", "1v1人人"] else addtime
+            addtime = -60*5 if self.对战模式 in ["人机闯关", "火焰山", "梦境大乱斗", "1v1人人"] else addtime
             if self.Tool.timelimit(timekey="结束人机匹配", limit=60*20 + addtime, init=False):
                 content = "结束人机匹配时间超时"
                 return self.创建同步文件(content)
@@ -1687,7 +1715,7 @@ class wzry_task:
             self.Tool.existsTHENtouch(点击此处继续, f"{fun_name(1)}.点击此处继续")
             #
             继续按钮 = Template(r"tpl1690545762580.png", record_pos=(-0.001, 0.233), resolution=(960, 540))
-            if self.对战模式 in ["火焰山", "1v1人人", "3v3匹配"]:
+            if self.对战模式 in ["火焰山", "1v1人人", "3v3匹配", "梦境大乱斗"]:
                 self.Tool.LoopTouch(继续按钮, "火焰山等继续按钮", savepos=False)
             #
             # 对战结算时的弹窗
@@ -2121,7 +2149,7 @@ class wzry_task:
                     self.Tool.existsTHENtouch(self.图片.礼册领取礼包, "礼册领取礼包", savepos=True)
         #
         # 领取之后,需要频繁点击屏幕,确定,为了避免出问题, 此时频繁点击右下加, 或者左上角的返回
-        for i in range(3):
+        for i in range(15):
             self.Tool.existsTHENtouch(self.图片.礼册领取礼包, "礼册领取礼包", savepos=True)
         #
         for i in range(5):
@@ -2605,6 +2633,7 @@ KPL观赛入口: !!python/tuple
     def 每日礼包_每日任务(self, times=0):
         TimeECHO(f"自S39赛季更新以来, 该[{fun_name()}]功能暂时无法使用, 请等待更新")
         TimeECHO(f"每日任务转移到了礼册系统")
+        TimeECHO(f"战令里面只有经验了,没什么需要领的东西了")
         return
         #
         if not self.check_run_status():
@@ -3169,7 +3198,7 @@ KPL观赛入口: !!python/tuple
                     #
                     # 这里是为了快速脱离水晶，排位卡在水晶就会被警告
                     # 因为单方向运行下面的内容，可能卡在坑里，但不会被处罚也挺好
-                    if self.对战模式 in ["5v5排位", "人机闯关", "1v1人人", "3v3匹配"]:
+                    if self.对战模式 in ["5v5排位", "人机闯关", "1v1人人", "3v3匹配", "梦境大乱斗"]:
                         for _ in range(5):
                             swipe(移动pos, vector=[x, -y])
                         if 普攻pos:
@@ -3183,7 +3212,7 @@ KPL观赛入口: !!python/tuple
 
                     #
                     # 人人模式随机点向上走走, 去吃对面小兵的伤害
-                    if random.randint(1, 5) == 1 and self.对战模式 in ["1v1人人", "3v3匹配"]:
+                    if random.randint(1, 5) == 1 and self.对战模式 in ["1v1人人", "3v3匹配", "梦境大乱斗"]:
                         TimeECHO("随机向上移动")
                         for _ in range(5):
                             swipe(移动pos, vector=[0.0, -0.2])
@@ -3229,7 +3258,7 @@ KPL观赛入口: !!python/tuple
         return True
 
     def 无脑移动保护信誉分(self):
-        if self.对战模式 in ["5v5排位", "人机闯关", "火焰山", "1v1人人", "3v3匹配"]:
+        if self.对战模式 in ["5v5排位", "人机闯关", "火焰山", "梦境大乱斗", "1v1人人", "3v3匹配"]:
             移动poskey = f"移动pos({self.mynode})"
             普攻poskey = f"普攻pos({self.mynode})"
             vector = [0.2, -0.2]
@@ -3740,7 +3769,7 @@ KPL观赛入口: !!python/tuple
                 continue
             # ------------------------------------------------------------------------------
             # 计算参数检查警告
-            if self.对战模式 in ["5v5排位", "人机闯关", "火焰山", "1v1人人", "3v3匹配"]:
+            if self.对战模式 in ["5v5排位", "人机闯关", "梦境大乱斗", "火焰山", "1v1人人", "3v3匹配"]:
                 TimeECHO(f"=⚠=" * 20)
                 if not os.path.exists(self.调试文件FILE):
                     TimeECHO(f"⚠ 警告：当前 [{self.对战模式}] 模式无法正常运行，请勿使用该模式！⚠️")
@@ -3759,7 +3788,7 @@ KPL观赛入口: !!python/tuple
             if self.对战模式 in ["人机闯关", "1v1人人"]:
                 self.对战结束返回房间 = False
             # 火焰山不支持选择英雄, "5v5排位"界面改了,暂未开发选英雄功能
-            if self.对战模式 in ["火焰山", "5v5排位"]:
+            if self.对战模式 in ["火焰山", "梦境大乱斗", "5v5排位"]:
                 self.选择英雄 = False
             elif self.对战模式 in ["1v1人人"]:
                 if self.totalnode_bak > 1 and self.组队模式:  # 让其他节点抓紧结束
