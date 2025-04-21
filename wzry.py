@@ -2242,9 +2242,7 @@ class wzry_task:
         促销入口 = Template(r"tpl1719455432184.png", record_pos=(-0.436, 0.075), resolution=(960, 540))
         免费图标 = Template(r"tpl1719455279197.png", record_pos=(-0.119, -0.25), resolution=(960, 540))
         免费领取 = Template(r"tpl1719455299372.png", record_pos=(0.04, 0.105), resolution=(960, 540), target_pos=8)
-        确定购买 = Template(r"tpl1705069645193.png", record_pos=(-0.105, 0.165), resolution=(960, 540))
         商城界面 = []
-        商城界面.append(促销入口)
         商城界面.append(免费图标)
         商城界面.append(Template(r"tpl1719455683640.png", record_pos=(-0.368, -0.25), resolution=(960, 540)))
         商城界面.append(Template(r"tpl1719455836014.png", record_pos=(-0.458, 0.19), resolution=(960, 540)))
@@ -2279,10 +2277,6 @@ class wzry_task:
         self.王者礼包_点击继续()
         sleep(10)
         #
-        # 这个只能点一次, 不然容易买到商品
-        self.Tool.existsTHENtouch(确定购买, "确定购买")
-        #
-        self.关闭按钮()
         self.Tool.LoopTouch(返回, "返回")
         #
         return True
@@ -2475,27 +2469,27 @@ class wzry_task:
         if self.友情礼包_积分夺宝 and self.Tool.existsTHENtouch(Template(r"tpl1700454863912.png", record_pos=(-0.124, -0.004), resolution=(960, 540)), "积分夺宝券"):
             sleep(5)
             if self.Tool.existsTHENtouch(Template(r"tpl1700454872767.png", record_pos=(0.32, 0.228), resolution=(960, 540)), "友情币兑换"):
-                self.王者礼包_点击继续()
-            if self.Tool.existsTHENtouch(Template(r"tpl1700454883635.png", record_pos=(0.098, 0.118), resolution=(960, 540)), "金色确定兑换"):
                 sleep(5)
+            if self.Tool.existsTHENtouch(Template(r"tpl1700454883635.png", record_pos=(0.098, 0.118), resolution=(960, 540)), "金色确定兑换"):
+                self.王者礼包_点击继续()
             if self.Tool.existsTHENtouch(Template(r"tpl1694441190629.png", record_pos=(0.0, 0.165), resolution=(960, 540)), "蓝色确定兑换"):
                 sleep(5)
         # 皮肤碎片
         if self.友情礼包_皮肤碎片 and self.Tool.existsTHENtouch(Template(r"tpl1700454908937.png", record_pos=(0.039, 0.004), resolution=(960, 540)), "皮肤碎片兑换"):
             sleep(5)
             if self.Tool.existsTHENtouch(Template(r"tpl1700454916324.png", record_pos=(0.317, 0.226), resolution=(960, 540)), "友情币兑换"):
-                self.王者礼包_点击继续()
-            if self.Tool.existsTHENtouch(Template(r"tpl1700454883635.png", record_pos=(0.098, 0.118), resolution=(960, 540)), "金色确定兑换"):
                 sleep(5)
+            if self.Tool.existsTHENtouch(Template(r"tpl1700454883635.png", record_pos=(0.098, 0.118), resolution=(960, 540)), "金色确定兑换"):
+                self.王者礼包_点击继续()
             if self.Tool.existsTHENtouch(Template(r"tpl1694441190629.png", record_pos=(0.0, 0.165), resolution=(960, 540)), "蓝色确定兑换"):
                 sleep(5)
         # 英雄碎片
         if self.友情礼包_英雄碎片 and self.Tool.existsTHENtouch(Template(r"tpl1700454935340.png", record_pos=(-0.28, 0.153), resolution=(960, 540)), "英雄碎片兑换"):
             sleep(5)
             if self.Tool.existsTHENtouch(Template(r"tpl1700454947514.png", record_pos=(0.321, 0.227), resolution=(960, 540)), "友情币兑换"):
-                self.王者礼包_点击继续()
-            if self.Tool.existsTHENtouch(Template(r"tpl1700454883635.png", record_pos=(0.098, 0.118), resolution=(960, 540)), "金色确定兑换"):
                 sleep(5)
+            if self.Tool.existsTHENtouch(Template(r"tpl1700454883635.png", record_pos=(0.098, 0.118), resolution=(960, 540)), "金色确定兑换"):
+                self.王者礼包_点击继续()
             if self.Tool.existsTHENtouch(Template(r"tpl1694441190629.png", record_pos=(0.0, 0.165), resolution=(960, 540)), "蓝色确定兑换"):
                 sleep(5)
         #
@@ -2503,50 +2497,46 @@ class wzry_task:
         if self.友情礼包_铭文碎片 and self.Tool.existsTHENtouch(Template(r"tpl1700455034567.png", record_pos=(-0.123, 0.155), resolution=(960, 540)), "铭文碎片兑换"):
             sleep(5)
             if self.Tool.existsTHENtouch(Template(r"tpl1700455039770.png", record_pos=(0.321, 0.226), resolution=(960, 540)), "友情币兑换"):
-                self.王者礼包_点击继续()
+                sleep(5)
             if self.Tool.existsTHENtouch(Template(r"tpl1700454883635.png", record_pos=(0.098, 0.118), resolution=(960, 540)), "金色确定兑换"):
-                sleep(5)
-            if self.Tool.existsTHENtouch(Template(r"tpl1694441190629.png", record_pos=(0.0, 0.165), resolution=(960, 540)), "蓝色确定兑换"):
-                sleep(5)
+                self.王者礼包_点击继续()
         #
         返回图标 = Template(r"tpl1707301421376.png", record_pos=(-0.445, -0.253), resolution=(960, 540))
         # 排位保护卡
         if self.友情礼包_排位保护 and self.Tool.existsTHENtouch(Template(r"tpl1731661786008.png", record_pos=(-0.281, -0.164), resolution=(960, 540)), "排位保护卡兑换"):
             if self.Tool.existsTHENtouch(Template(r"tpl1731661803315.png", record_pos=(0.317, 0.225), resolution=(960, 540)), "友情币兑换"):
-                self.王者礼包_点击继续()
-            if self.Tool.existsTHENtouch(Template(r"tpl1700454987098.png", record_pos=(0.1, 0.117), resolution=(960, 540)), "金色确定兑换"):
                 sleep(5)
+            if self.Tool.existsTHENtouch(Template(r"tpl1700454987098.png", record_pos=(0.1, 0.117), resolution=(960, 540)), "金色确定兑换"):
+                self.王者礼包_点击继续()
             if self.Tool.existsTHENtouch(Template(r"tpl1700454996867.png", record_pos=(-0.099, 0.166), resolution=(960, 540)), "蓝色确定兑换"):
                 sleep(5)
-            self.Tool.existsTHENtouch(返回图标, "友情礼包返回图标", savepos=True)
-        self.Tool.LoopTouch(返回图标, "友情礼包返回图标", savepos=False)
-        TimeECHO(f"当前[{fun_name()}]功能存在残缺, 请手动替换宝箱图标后使用下面功能")
-        return
-
+        #
+        # 宝箱
         if self.友情礼包_皮肤宝箱 and self.Tool.existsTHENtouch(Template(r"tpl1700454970340.png", record_pos=(-0.12, -0.154), resolution=(960, 540)), "皮肤宝箱兑换"):
             sleep(5)
-            if self.Tool.existsTHENtouch(Template(r"tpl1700454978914.png", record_pos=(0.32, 0.228), resolution=(960, 540)), "友情币兑换"):
-                self.王者礼包_点击继续()
+            if self.Tool.existsTHENtouch(Template(r"tpl1707301267168.png", record_pos=(0.32, 0.228), resolution=(960, 540)), "友情币兑换"):
+                sleep(5)
             if self.Tool.existsTHENtouch(Template(r"tpl1700454987098.png", record_pos=(0.1, 0.117), resolution=(960, 540)), "金色确定兑换"):
                 sleep(5)
             if self.Tool.existsTHENtouch(Template(r"tpl1700454996867.png", record_pos=(-0.099, 0.166), resolution=(960, 540)), "蓝色确定兑换"):
                 sleep(5)
             self.Tool.existsTHENtouch(返回图标, "友情礼包返回图标", savepos=True)
+        # S39更新后, 回城和击败宝箱的图标相同了, 无法通过图标识别点击，因此阔大选取，并通过target设定
         # 回城宝箱
-        if self.友情礼包_回城宝箱 and self.Tool.existsTHENtouch(Template(r"tpl1707301299599.png", record_pos=(0.035, -0.15), resolution=(960, 540)), "回城宝箱兑换"):
+        if self.友情礼包_回城宝箱 and self.Tool.existsTHENtouch(Template(r"tpl1707301299599.png", record_pos=(0.035, -0.15), resolution=(960, 540), target_pos=3), "回城宝箱兑换"):
             sleep(5)
             if self.Tool.existsTHENtouch(Template(r"tpl1707301267168.png", record_pos=(0.32, 0.228), resolution=(960, 540)), "友情币兑换"):
-                self.王者礼包_点击继续()
+                sleep(5)
             if self.Tool.existsTHENtouch(Template(r"tpl1700454987098.png", record_pos=(0.1, 0.117), resolution=(960, 540)), "金色确定兑换"):
                 sleep(5)
             if self.Tool.existsTHENtouch(Template(r"tpl1700454996867.png", record_pos=(-0.099, 0.166), resolution=(960, 540)), "蓝色确定兑换"):
                 sleep(5)
             self.Tool.existsTHENtouch(返回图标, "友情礼包返回图标", savepos=True)
         # 击败宝箱
-        if self.友情礼包_击败宝箱 and self.Tool.existsTHENtouch(Template(r"tpl1707301309821.png", record_pos=(-0.279, 0.005), resolution=(960, 540)), "击败宝箱兑换"):
+        if self.友情礼包_击败宝箱 and self.Tool.existsTHENtouch(Template(r"tpl1707301309821.png", record_pos=(-0.279, 0.005), resolution=(960, 540), target_pos=1), "击败宝箱兑换"):
             sleep(5)
             if self.Tool.existsTHENtouch(Template(r"tpl1707301267168.png", record_pos=(0.32, 0.228), resolution=(960, 540)), "友情币兑换"):
-                self.王者礼包_点击继续()
+                sleep(5)
             if self.Tool.existsTHENtouch(Template(r"tpl1700454987098.png", record_pos=(0.1, 0.117), resolution=(960, 540)), "金色确定兑换"):
                 sleep(5)
             if self.Tool.existsTHENtouch(Template(r"tpl1700454996867.png", record_pos=(-0.099, 0.166), resolution=(960, 540)), "蓝色确定兑换"):
