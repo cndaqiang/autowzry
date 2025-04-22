@@ -2328,8 +2328,6 @@ class wzry_task:
         return True
 
     def 祈愿入口(self, times=0):
-        TimeECHO(f"自S39赛季更新, 该[{fun_name()}]功能停止维护")
-        return
         # 进入祈愿界面，可以领取一些活动的祈愿币，手动兑换一些钻石、积分
         #
         if not self.check_run_status():
