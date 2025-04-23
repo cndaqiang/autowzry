@@ -172,9 +172,10 @@ class wzry_figure:
         self.人机闯关第一关 = Template(r"tpl1739240712588.png", record_pos=(-0.438, -0.18), resolution=(960, 540))
         #
         # 开始图标和登录图标等很接近, 不要用于房间判断
+        #
         self.房间中的开始按钮图标 = []
         self.房间中的开始按钮图标.append(Template(r"tpl1689666117573.png", record_pos=(0.096, 0.232), resolution=(960, 540), threshold=0.9))
-        self.确定匹配按钮 = Template(r"tpl1689666290543.png", record_pos=(0.096, 0.232), resolution=(960, 540), threshold=0.8)
+        self.确定匹配按钮 = Template(r"tpl1689666290543.png", record_pos=(0.0, 0.20), resolution=(960, 540), threshold=0.8)
         self.展开英雄列表 = Template(r"tpl1689666324375.png", record_pos=(-0.297, -0.022), resolution=(960, 540))
         self.房间中的取消按钮图标 = []
         self.房间中的取消按钮图标.append(Template(r"tpl1699179402893.png", record_pos=(0.098, 0.233), resolution=(960, 540), threshold=0.9))
@@ -1439,7 +1440,7 @@ class wzry_task:
             self.Tool.touch_record_pos(record_pos=self.图片.大厅娱乐模式.record_pos, resolution=self.移动端.resolution, keystr=f"强制点击大厅娱乐模式")
         sleep(5)
         # 不同账户的图标位置可能有区别, 这里更新一下位置
-        self.Tool.存在任一张图([self.图片.王者模拟战图标], "王者模拟战图标", savepos=True)
+        已进入娱乐模式, _ = self.Tool.存在任一张图([self.图片.王者模拟战图标], "王者模拟战图标", savepos=True)
         if not self.Tool.existsTHENtouch(self.图片.王者模拟战图标, "王者模拟战图标", savepos=True):
             self.Tool.touch_record_pos(record_pos=self.图片.王者模拟战图标.record_pos, resolution=self.移动端.resolution, keystr=f"强制点击王者模拟战图标")
         sleep(5)
@@ -1461,8 +1462,12 @@ class wzry_task:
         if self.判断房间中(处理=False):
             return True
         else:
-            for delstr in list(set(self.Tool.var_dict.keys()) & set(["大厅娱乐模式", "王者模拟战图标", "模拟战.邀请好友"])):
-                del self.Tool.var_dict[delstr]
+            if not 已进入娱乐模式:
+                for delstr in list(set(self.Tool.var_dict.keys()) & set(["大厅娱乐模式", "王者模拟战图标"])):
+                    del self.Tool.var_dict[delstr]
+            if not 存在邀请好友:
+                for delstr in list(set(self.Tool.var_dict.keys()) & set(["模拟战.邀请好友"])):
+                    del self.Tool.var_dict[delstr]
             return self.单人进入人机匹配房间(times)
 
     def 单人进入人机匹配房间_火焰山(self, times=0):
@@ -1476,15 +1481,16 @@ class wzry_task:
             self.Tool.touch_record_pos(record_pos=self.图片.大厅娱乐模式.record_pos, resolution=self.移动端.resolution, keystr=f"强制点击大厅娱乐模式")
         sleep(10)  # 进入娱乐模式时, 很多模式的图片需要刷新出来, 多等一会
         # 不同账户的图标位置可能有区别, 这里更新一下位置
-        self.Tool.存在任一张图([self.图片.火焰山图标], "火焰山图标", savepos=True)
+        已进入娱乐模式, _ = self.Tool.存在任一张图([self.图片.火焰山图标], "火焰山图标", savepos=True)
         if not self.Tool.existsTHENtouch(self.图片.火焰山图标, "火焰山图标", savepos=True):
             self.Tool.touch_record_pos(record_pos=self.图片.火焰山图标.record_pos, resolution=self.移动端.resolution, keystr=f"强制点击火焰山图标图标")
         sleep(5)
         if self.判断房间中(处理=True):
             return True
         else:
-            for delstr in list(set(self.Tool.var_dict.keys()) & set(["大厅娱乐模式", "火焰山图标"])):
-                del self.Tool.var_dict[delstr]
+            if not 已进入娱乐模式:
+                for delstr in list(set(self.Tool.var_dict.keys()) & set(["大厅娱乐模式", "火焰山图标"])):
+                    del self.Tool.var_dict[delstr]
             return self.单人进入人机匹配房间(times)
 
     def 单人进入人机匹配房间_梦境大乱斗(self, times=0):
@@ -1498,7 +1504,7 @@ class wzry_task:
             self.Tool.touch_record_pos(record_pos=self.图片.大厅娱乐模式.record_pos, resolution=self.移动端.resolution, keystr=f"强制点击大厅娱乐模式")
         sleep(10)  # 进入娱乐模式时, 很多模式的图片需要刷新出来, 多等一会
         # 不同账户的图标位置可能有区别, 这里更新一下位置
-        self.Tool.存在任一张图([self.图片.梦境大乱斗图标], "梦境大乱斗图标", savepos=True)
+        已进入娱乐模式, _ = self.Tool.存在任一张图([self.图片.梦境大乱斗图标], "梦境大乱斗图标", savepos=True)
         if not self.Tool.existsTHENtouch(self.图片.梦境大乱斗图标, "梦境大乱斗图标", savepos=True):
             self.Tool.touch_record_pos(record_pos=self.图片.梦境大乱斗图标.record_pos, resolution=self.移动端.resolution, keystr=f"强制点击火焰山图标图标")
         sleep(5)
@@ -1507,8 +1513,12 @@ class wzry_task:
         if self.判断房间中(处理=True):
             return True
         else:
-            for delstr in list(set(self.Tool.var_dict.keys()) & set(["大厅娱乐模式", "梦境大乱斗图标", "梦境大乱斗图标人机"])):
-                del self.Tool.var_dict[delstr]
+            if not 已进入娱乐模式:
+                for delstr in list(set(self.Tool.var_dict.keys()) & set(["大厅娱乐模式", "梦境大乱斗图标"])):
+                    del self.Tool.var_dict[delstr]
+            if True:
+                for delstr in list(set(self.Tool.var_dict.keys()) & set(["梦境大乱斗图标人机"])):
+                    del self.Tool.var_dict[delstr]
             return self.单人进入人机匹配房间(times)
 
     def 进行人机匹配(self, times=0):
@@ -1974,6 +1984,12 @@ class wzry_task:
                 TimeECHO("领礼包时.检测状态失败, 停止领取")
                 return
             self.APPOB.打开APP()
+            #
+            # 如果不领取营地和体验服,则是对战结束后开始领取礼包, 此时大概率是房间界面,此时按一下返回到大厅
+            存在, self.图片.返回按钮 = self.Tool.存在任一张图(self.图片.返回按钮, f"{fun_name(1)}.{fun_name(2)}返回按钮", savepos=True)
+            if 存在:
+                self.Tool.existsTHENtouch(self.图片.返回按钮[0], f"{fun_name(1)}.{fun_name(2)}返回按钮", savepos=True)
+                self.Tool.LoopTouch(self.图片.返回按钮[0], "返回按钮", loop=3, savepos=False)
             #
             if not self.判断大厅中(acce=False):
                 self.进入大厅()
