@@ -175,7 +175,7 @@ class wzry_figure:
         #
         self.房间中的开始按钮图标 = []
         self.房间中的开始按钮图标.append(Template(r"tpl1689666117573.png", record_pos=(0.096, 0.232), resolution=(960, 540), threshold=0.9))
-        self.确定匹配按钮 = Template(r"tpl1689666290543.png", record_pos=(0.0, 0.20), resolution=(960, 540), threshold=0.8)
+        self.确定匹配按钮 = Template(r"tpl1689666290543.png", record_pos=(0.0, 0.20), resolution=(960, 540), threshold=0.8)  # y=0.17~0.20
         self.展开英雄列表 = Template(r"tpl1689666324375.png", record_pos=(-0.297, -0.022), resolution=(960, 540))
         self.房间中的取消按钮图标 = []
         self.房间中的取消按钮图标.append(Template(r"tpl1699179402893.png", record_pos=(0.098, 0.233), resolution=(960, 540), threshold=0.9))
@@ -2148,25 +2148,28 @@ class wzry_task:
                 for delstr in list(set(self.Tool.var_dict.keys()) & set(["大厅回忆礼册"])):
                     del self.Tool.var_dict[delstr]
             if not self.Tool.existsTHENtouch(self.图片.大厅回忆礼册, "大厅回忆礼册", savepos=True):
-                return self.回忆礼册(times)
+                return self.回忆礼册S39(times)
         #
         sleep(10)
         #
         if not exists(self.图片.礼册赢得对局):
             TimeECHO(f"礼册: 找不到<赢得1张对战>图标, 或许进入错误界面或者礼册更新了")
             if times < 3:
-                return self.回忆礼册(times)
+                return self.回忆礼册S39(times)
             else:
                 # 3次以后,强制领取
-                # 强制领取礼包
-                if max(self.移动端.resolution) == 960:
-                    self.Tool.touch_record_pos(record_pos=self.图片.礼册领取礼包.record_pos, resolution=self.移动端.resolution, keystr="礼册领取礼包", savepos=True)
-                else:
-                    self.Tool.existsTHENtouch(self.图片.礼册领取礼包, "礼册领取礼包", savepos=True)
+                self.Tool.existsTHENtouch(self.图片.礼册领取礼包, "礼册领取礼包", savepos=True)
         #
         # 领取之后,需要频繁点击屏幕,确定,为了避免出问题, 此时频繁点击右下加, 或者左上角的返回
-        for i in range(15):
-            self.Tool.existsTHENtouch(self.图片.礼册领取礼包, "礼册领取礼包", savepos=True)
+        for i in range(20):
+            # 正常识别
+            self.Tool.existsTHENtouch(self.图片.礼册领取礼包, "礼册领取礼包")
+            # 没有强制点击，是因为强制点击的最后一个位置可能还没有完成.
+            # 强制点击
+            if max(self.移动端.resolution) == 960:
+                self.Tool.touch_record_pos(record_pos=self.图片.礼册领取礼包.record_pos, resolution=self.移动端.resolution, keystr="礼册领取礼包", savepos=True)
+            else:
+                self.Tool.existsTHENtouch(self.图片.礼册领取礼包, "礼册领取礼包", savepos=True)
         #
         for i in range(5):
             self.Tool.existsTHENtouch(self.图片.礼册返回图标, "礼册返回图标", savepos=True)
