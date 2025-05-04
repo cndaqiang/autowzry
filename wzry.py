@@ -142,7 +142,7 @@ class wzry_figure:
         # 回忆礼册
         self.大厅回忆礼册 = Template(r"tpl1744184457731.png", record_pos=(0.467, 0.066), resolution=(960, 540))
         self.礼册赢得对局 = Template(r"tpl1744184473551.png", record_pos=(0.325, 0.201), resolution=(960, 540))
-        self.礼册领取礼包 = Template(r"tpl1744184478234.png", record_pos=(0.426, 0.218), resolution=(960, 540))
+        self.礼册领取礼包 = Template(r"tpl1744184478234.png", record_pos=(-0.211, 0.218), resolution=(960, 540))
         self.礼册返回图标 = Template(r"tpl1744184504445.png", record_pos=(-0.459, -0.252), resolution=(960, 540))
         #
         self.大厅祈愿 = []
@@ -198,8 +198,6 @@ class wzry_figure:
         self.大厅元素 = []
         self.大厅元素.append(self.大厅对战图标)
         self.大厅元素.append(self.大厅娱乐模式)
-        for i in self.妲己图标:
-            self.大厅元素.append(i)
         #
         self.房间元素 = []
         self.房间元素.append(Template(r"tpl1690442701046.png", record_pos=(0.135, -0.029), resolution=(960, 540)))
@@ -920,7 +918,7 @@ class wzry_task:
         return self.登录游戏(times, 检测到登录界面)
 
     def 大厅严格判断(self):
-        if self.判断大厅中(acce=False):
+        if self.判断大厅中(acce=False, 强制判断更新=True):
             # 有时候卡顿, 这里等待一下
             sleep(5)
             if not self.存在确定按钮():
@@ -1991,7 +1989,7 @@ class wzry_task:
                 self.Tool.existsTHENtouch(self.图片.返回按钮[0], f"{fun_name(1)}.{fun_name(2)}返回按钮", savepos=True)
                 self.Tool.LoopTouch(self.图片.返回按钮[0], "返回按钮", loop=3, savepos=False)
             #
-            if not self.判断大厅中(acce=False):
+            if not self.判断大厅中(acce=False, 检测更新=True):
                 self.进入大厅()
             #
             if not self.check_run_status():
@@ -2069,7 +2067,7 @@ class wzry_task:
         if not self.check_run_status():
             return True
         #
-        if times > 0 or not self.判断大厅中(acce=False):
+        if times > 0 or not self.判断大厅中(acce=False, 检测更新=True):
             self.进入大厅()
         #
         if not self.check_run_status():
@@ -2129,7 +2127,7 @@ class wzry_task:
         if not self.check_run_status():
             return True
         #
-        if times > 0 or not self.判断大厅中(acce=False):
+        if times > 0 or not self.判断大厅中(acce=False, 检测更新=True):
             self.进入大厅()
         #
         if not self.check_run_status():
@@ -2158,24 +2156,27 @@ class wzry_task:
                 return self.回忆礼册S39(times)
             else:
                 # 3次以后,强制领取
-                self.Tool.existsTHENtouch(self.图片.礼册领取礼包, "礼册领取礼包", savepos=True)
+                self.Tool.existsTHENtouch(self.图片.礼册领取礼包, "礼册领取礼包", savepos=False)
         #
-        # 领取之后,需要频繁点击屏幕,确定,为了避免出问题, 此时频繁点击右下加, 或者左上角的返回
+        # 领取之后,需要频繁点击屏幕,确定
         for i in range(20):
             # 正常识别
             self.Tool.existsTHENtouch(self.图片.礼册领取礼包, "礼册领取礼包")
             # 没有强制点击，是因为强制点击的最后一个位置可能还没有完成.
             # 强制点击
             if max(self.移动端.resolution) == 960:
-                self.Tool.touch_record_pos(record_pos=self.图片.礼册领取礼包.record_pos, resolution=self.移动端.resolution, keystr="礼册领取礼包", savepos=True)
+                # 不再识别, 依次点击三个可能的情况
+                posarray = [-0.211, 0.105, 0.427]
+                record_pos = (posarray[i % len(posarray)], 0.215)
+                self.Tool.touch_record_pos(record_pos=record_pos, resolution=self.移动端.resolution, keystr="礼册领取礼包", savepos=True)
             else:
                 self.Tool.existsTHENtouch(self.图片.礼册领取礼包, "礼册领取礼包", savepos=True)
-        #
-        for i in range(5):
-            self.Tool.existsTHENtouch(self.图片.礼册返回图标, "礼册返回图标", savepos=True)
+        # 避免没完成任务, 点到对战界面, 此处返回
+        self.Tool.existsTHENtouch(self.图片.礼册返回图标, "礼册返回图标", savepos=True)
+        self.Tool.LoopTouch(self.图片.礼册返回图标, "礼册返回图标", savepos=False)
         #
         # 如果最后在大厅就结束,不再就再点一次返回. 最后返回界面是在大厅、礼册、个人资料, 是不确定
-        if self.判断大厅中():
+        if self.判断大厅中(acce=False):
             return
         else:
             self.Tool.existsTHENtouch(self.图片.礼册返回图标, "礼册返回图标", savepos=True)
@@ -2184,54 +2185,6 @@ class wzry_task:
     def 灵宝互动(self, times=0):
         TimeECHO(f"自S39赛季更新, 该[{fun_name()}]功能停止维护")
         return
-        if not self.check_run_status():
-            return True
-        #
-        if times > 0 or not self.判断大厅中(acce=False):
-            self.进入大厅()
-        #
-        if not self.check_run_status():
-            return True
-        #
-        if self.set_timelimit(istep=times, init=times == 0, timelimit=60*10, nstep=10):
-            return True
-        #
-        #
-        times = times+1
-        #
-        # 在此处循环点击灵宝的头顶礼包, 直到点回大厅
-        互动按钮 = Template(r"tpl1731661759718.png", record_pos=(-0.006, 0.024), resolution=(960, 540))
-        灵宝入口 = Template(r"tpl1731665149612.png", record_pos=(0.002, 0.107), resolution=(960, 540))
-        关闭按钮 = Template(r"tpl1723334229790.png", record_pos=(0.361, -0.194), resolution=(960, 540))
-        返回按钮 = Template(r"tpl1723334241957.png", record_pos=(-0.439, -0.25), resolution=(960, 540))
-        #
-        self.Tool.cal_record_pos(灵宝入口.record_pos, self.移动端.resolution, f"灵宝入口按钮", savepos=True)
-        self.Tool.cal_record_pos(互动按钮.record_pos, self.移动端.resolution, f"灵宝互动按钮", savepos=True)
-        # 就直接强制点击进行了, 根本不用识别
-        # 灵宝界面不断点击
-        for i in range(5):
-            self.Tool.existsTHENtouch(灵宝入口, f"灵宝入口按钮", savepos=True)
-            sleep(1)
-            self.Tool.existsTHENtouch(互动按钮, f"灵宝互动按钮", savepos=True)
-            sleep(1)
-        self.确定按钮()
-        self.Tool.LoopTouch(返回按钮, f"{fun_name(1)}返回按钮", loop=5, savepos=False)
-        #
-        if self.判断大厅中(acce=False):
-            for i in range(5):
-                self.Tool.existsTHENtouch(互动按钮, f"灵宝互动按钮", savepos=True)
-                sleep(1)
-            # 有可能回点到灵宝活动
-            sleep(10)
-            if self.判断大厅中(acce=False):
-                return True
-            # 不在大厅可能领到了特殊的礼物
-            for i in range(5):
-                self.Tool.existsTHENtouch(互动按钮, f"灵宝互动按钮", savepos=True)
-                sleep(1)
-            self.确定按钮()
-            self.Tool.existsTHENtouch(关闭按钮, f"{fun_name(1)}关闭按钮", savepos=False)
-            self.Tool.LoopTouch(返回按钮, f"{fun_name(1)}返回按钮", loop=5, savepos=False)
 
     def 商城免费礼包(self, times=0):
         TimeECHO(f"当前[{fun_name()}]功能仅适配至[{updata}],后续时间可能无法使用")
@@ -2240,7 +2193,7 @@ class wzry_task:
         if not self.check_run_status():
             return False
         #
-        if times > 0 or not self.判断大厅中(acce=False):
+        if times > 0 or not self.判断大厅中(acce=False, 检测更新=True):
             self.进入大厅()
         #
         if not self.check_run_status():
@@ -2308,7 +2261,7 @@ class wzry_task:
         if not self.check_run_status():
             return True
         #
-        if times > 0 or not self.判断大厅中(acce=False):
+        if times > 0 or not self.判断大厅中(acce=False, 检测更新=True):
             self.进入大厅()
         #
         if not self.check_run_status():
@@ -2352,7 +2305,7 @@ class wzry_task:
         if not self.check_run_status():
             return True
         #
-        if times > 0 or not self.判断大厅中(acce=False):
+        if times > 0 or not self.判断大厅中(acce=False, 检测更新=True):
             self.进入大厅()
         #
         if not self.check_run_status():
@@ -2398,7 +2351,7 @@ class wzry_task:
         if not self.check_run_status():
             return True
         #
-        if times > 0 or not self.判断大厅中(acce=False):
+        if times > 0 or not self.判断大厅中(acce=False, 检测更新=True):
             self.进入大厅()
         #
         if not self.check_run_status():
@@ -2462,7 +2415,7 @@ class wzry_task:
         开发建议: 宝箱的图标换了,需要使用sirtestIDE截图替换
         """
         #
-        if times > 0 or not self.判断大厅中(acce=False):
+        if times > 0 or not self.判断大厅中(acce=False, 检测更新=True):
             self.进入大厅()
         #
         times = times + 1
@@ -2573,7 +2526,7 @@ KPL观赛入口: !!python/tuple
         if not self.check_run_status():
             return True
         #
-        if times > 0 or not self.判断大厅中(acce=False):
+        if times > 0 or not self.判断大厅中(acce=False, 检测更新=True):
             self.进入大厅()
         #
         if not self.check_run_status():
@@ -2646,7 +2599,7 @@ KPL观赛入口: !!python/tuple
         if not self.check_run_status():
             return True
         #
-        if times > 0 or not self.判断大厅中(acce=False):
+        if times > 0 or not self.判断大厅中(acce=False, 检测更新=True):
             self.进入大厅()
         #
         if not self.check_run_status():
@@ -2759,7 +2712,7 @@ KPL观赛入口: !!python/tuple
         if not self.check_run_status():
             return True
         #
-        if times > 0 or not self.判断大厅中(acce=False):
+        if times > 0 or not self.判断大厅中(acce=False, 检测更新=True):
             self.进入大厅()
         #
         if not self.check_run_status():
@@ -2843,49 +2796,6 @@ KPL观赛入口: !!python/tuple
         """
         妲己领礼包入口已被王者关停，无法领取
         """
-        #
-        if not self.check_run_status():
-            return True
-        #
-        if times > 0 or not self.判断大厅中(acce=False):
-            self.进入大厅()
-        #
-        if not self.check_run_status():
-            return True
-        #
-        if self.set_timelimit(istep=times, init=times == 0, timelimit=60*10, nstep=10):
-            return True
-        #
-        times = times+1
-        #
-        一键领奖 = Template(r"tpl1694442066106.png", record_pos=(-0.134, 0.033), resolution=(960, 540))
-        去领取 = Template(r"tpl1694442088041.png", record_pos=(-0.135, 0.107), resolution=(960, 540))
-        收下 = Template(r"tpl1694442103573.png", record_pos=(-0.006, 0.181), resolution=(960, 540))
-        确定 = Template(r"tpl1694441190629.png", record_pos=(0.0, 0.165), resolution=(960, 540))
-        返回 = Template(r"tpl1694442136196.png", record_pos=(-0.445, -0.251), resolution=(960, 540))
-        能力测试关闭 = Template(r"tpl1699626801240.png", record_pos=(0.34, -0.205), resolution=(960, 540))
-        #
-        存在妲己图标, self.图片.妲己图标 = self.Tool.存在任一张图(self.图片.妲己图标, f"妲己图标", savepos=True)
-        if 存在妲己图标:
-            self.Tool.existsTHENtouch(self.图片.妲己图标[0], f"妲己图标", savepos=True)
-        elif times > 2:
-            # 多次识别不成功, 强制点击
-            TimeECHO("没找到妲己图标, 尝试强制点击")
-            self.Tool.touch_record_pos(record_pos=self.图片.妲己图标[0].record_pos, resolution=self.移动端.resolution, keystr="妲己图标")
-        else:
-            # 前几次失败, 重新返回大厅识别
-            return self.每日礼包_妲己礼物(times)
-        #
-        if exists(一键领奖):
-            self.Tool.existsTHENtouch(去领取, "去领取")
-            self.Tool.LoopTouch(收下, "收下", loop=10)
-            self.Tool.LoopTouch(确定, "确定", loop=10)
-            self.Tool.LoopTouch(收下, "收下", loop=10)
-            self.Tool.LoopTouch(确定, "确定", loop=10)
-        self.Tool.existsTHENtouch(能力测试关闭, "能力测试关闭")
-        self.Tool.LoopTouch(返回, "返回")
-        self.确定按钮()
-        return True
         #
     #
 
@@ -2984,11 +2894,18 @@ KPL观赛入口: !!python/tuple
         #
     #
 
-    def 判断大厅中(self, acce=False):
+    def 判断大厅中(self, acce=False, 检测更新=False, 强制判断更新=False):
         # 在安全的页面进行acce
         # 有些快速情况不适合加速，比如正在实时校验的登录游戏和进入大厅函数中.
         # 应该合理规划是否要 调用 self.判断大厅中()
         # 而不是无脑用acce减少判断时间
+        # 在活动更新时, 无法判断大厅, 此时通过点击判断实现, 配合存储记忆
+        #
+        if "大厅判断.正确识别时间" not in self.Tool.var_dict.keys():
+            self.Tool.var_dict["大厅判断.正确识别时间"] = 0
+        if "大厅判断.活动更新时间" not in self.Tool.var_dict.keys():
+            self.Tool.var_dict["大厅判断.活动更新时间"] = 0
+        #
         if acce:
             #
             if self.quick判断界面() in ["登录界面", "房间中", "对战中", "对战中_模拟战", "战绩页面"]:
@@ -3019,6 +2936,30 @@ KPL观赛入口: !!python/tuple
         else:
             self.当前界面 = "未知"
         #
+        if 存在:
+            self.Tool.var_dict["大厅判断.正确识别时间"] = time.time()
+            self.Tool.var_dict["大厅判断.活动更新时间"] = 0
+        else:
+            now = time.time()
+            delta_time = 60*60*24*2
+            if 检测更新:
+                if now - self.Tool.var_dict["大厅判断.正确识别时间"] > delta_time:
+                    强制判断更新 = True
+                if now - self.Tool.var_dict["大厅判断.活动更新时间"] < delta_time:
+                    强制判断更新 = True
+            # 在游戏更新时, 大厅图标识别失败, 通过强制点击对战, 根据是否有5v5进行判断
+            if 强制判断更新:
+                TimeECHO(f"{fun_name(1)}.{fun_name(2)}活动更新,大厅界面改变,将采用动态判断措施")
+                if self.Tool.existsTHENtouch(self.图片.大厅对战图标, "大厅对战", savepos=True):
+                    if exists(self.图片.进入5v5匹配):
+                        # 返回按钮
+                        返回 = Template(r"tpl1694442171115.png", record_pos=(-0.441, -0.252), resolution=(960, 540))
+                        self.Tool.LoopTouch(返回, "返回")
+                        #
+                        self.Tool.var_dict["大厅判断.正确识别时间"] = 0
+                        self.Tool.var_dict["大厅判断.活动更新时间"] = time.time()
+                        存在 = True
+        self.Tool.save_dict(self.Tool.var_dict, self.dictfile)
         return 存在
 
     def 判断房间中(self, 处理=False, acce=False):
