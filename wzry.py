@@ -151,10 +151,6 @@ class wzry_figure:
         self.大厅活动 = []
         self.大厅活动.append(Template(r"tpl1728168902804.png", record_pos=(0.463, -0.025), resolution=(960, 540)))
         #
-        # 小妲己的图标会变化
-        self.妲己图标 = []
-        self.妲己图标.append(Template(r"tpl1694441259292.png", record_pos=(0.458, 0.21), resolution=(960, 540)))
-        self.妲己图标.append(Template(r"tpl1703297029482.png", record_pos=(0.451, 0.207), resolution=(960, 540)))
         # 这种活动图标总在变，直接写死成绝对坐标来避免识别
         #
         # 人机选择图标
@@ -197,6 +193,7 @@ class wzry_figure:
         #
         self.大厅元素 = []
         self.大厅元素.append(self.大厅对战图标)
+        self.大厅元素.append(self.大厅排位赛)
         self.大厅元素.append(self.大厅娱乐模式)
         #
         self.房间元素 = []
@@ -647,6 +644,11 @@ class wzry_task:
             # 进不去就重启
             return self.重启并登录(10)
         #
+        if self.set_timelimit(istep=times, init=times == 0, timelimit=60*2, nstep=10, touch同步=True, timekey="太久无法进入大厅"):
+            TimeECHO("两小时进不去, 要么代码不适配了, 或者游戏账号退出了")
+            self.Tool.touchfile(self.重新登录FILE)
+
+        #
         times = times+1
         TimeECHO(f"{fun_name(2)}.尝试进入大厅{times}")
         #
@@ -721,8 +723,8 @@ class wzry_task:
         # 次数上限/时间上限，则重启
         if self.set_timelimit(istep=times, init=times == 0, timelimit=60*20, nstep=10, touch同步=True):
             content = f"登录游戏超时退出"
-            self.移动端.重启重连设备(10)
             self.创建同步文件(content)
+            self.移动端.重启重连设备(10)
             return True
         #
         if times == 0:
@@ -3325,16 +3327,17 @@ KPL观赛入口: !!python/tuple
         return True
     #
 
-    def set_timelimit(self, istep, init, timelimit, nstep, touch同步=False):
+    def set_timelimit(self, istep, init, timelimit, nstep, touch同步=False, timekey=None):
         """
         超时返回True
         对战函数相关时: touch同步=True
         领礼包的函数时: touch同步=False
         """
         content = f"{fun_name(2)}.运行.{istep}.次"
+        timekey = f"{fun_name(2)}" if timekey is None else timekey
         if init:
-            self.Tool.timelimit(timekey=f"{fun_name(2)}", limit=timelimit, init=True)
-        elif self.Tool.timelimit(timekey=f"{fun_name(2)}", limit=timelimit, init=False) or istep > nstep:
+            self.Tool.timelimit(timekey=timekey, limit=timelimit, init=True)
+        elif self.Tool.timelimit(timekey=timekey, limit=timelimit, init=False) or istep > nstep:
             content = f"{content}...........超时"
             if touch同步:
                 self.创建同步文件(content)
@@ -3750,7 +3753,7 @@ KPL观赛入口: !!python/tuple
                     TimeECHO(f"警告: 不建议星耀难度开启TOUCH模式")
                 if not self.青铜段位 and self.Tool.var_dict["运行参数.青铜段位"]:
                     TimeECHO(f"警告: 检测到对战达到星耀对战上限, 但仍将依据 self.青铜段位 = {self.青铜段位} 尝试进行星耀对战")
-            if self.对战模式 not in ["人机闯关", "5v5匹配"]:
+            if self.对战模式 not in ["人机闯关", "5v5匹配", "火焰山"]:
                 TimeECHO(f"自S39赛季更新, [{self.对战模式}]模式停止维护, 请自行检查可用情况")
             if self.组队模式:
                 TimeECHO(f"自S39赛季更新,组队停止维护, 请自行检查可用情况")
