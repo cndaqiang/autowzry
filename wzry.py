@@ -575,14 +575,14 @@ class wzry_task:
         else:
             return 确定按钮
 
-    def 确定按钮(self):
+    def 点击确定按钮(self):
         确定按钮 = self.存在确定按钮()
         if not 确定按钮:
             return False
         for i in 确定按钮:
             self.Tool.existsTHENtouch(i, f"确定{i}", savepos=False)
 
-    def 关闭按钮(self):
+    def 点击关闭按钮(self):
         # 这个循环仅作为识别关闭按钮位置的循环
         # 主要用于: self.进入大厅时遇到的复杂的关闭按钮()
         self.图片.王者登录关闭按钮 = self.Tool.uniq_Template_array(self.图片.王者登录关闭按钮)
@@ -614,7 +614,7 @@ class wzry_task:
     #
 
     def 进入大厅时遇到的复杂的关闭按钮(self):
-        self.关闭按钮()
+        self.点击关闭按钮()
         sleep(2)
         if self.判断大厅中(acce=False):
             return True
@@ -696,7 +696,7 @@ class wzry_task:
         返回图标 = Template(r"tpl1692949580380.png", record_pos=(-0.458, -0.25), resolution=(960, 540), threshold=0.9)
         if times < 2 and self.判断房间中(处理=False):
             self.Tool.LoopTouch(返回图标, "返回图标", loop=3, savepos=False)
-            self.确定按钮()
+            self.点击确定按钮()
             self.Tool.LoopTouch(返回图标, "返回图标", loop=3, savepos=False)
         #
         # 界面识别
@@ -803,7 +803,7 @@ class wzry_task:
                 if exists(Template(r"tpl1692952266315.png", record_pos=(-0.411, 0.266), resolution=(960, 540), threshold=0.9)):
                     TimeECHO("正在下载资源包")
                 sleep(60)
-                self.确定按钮()
+                self.点击确定按钮()
         #
         # 登录界面有两个协议: 《用户协议和隐私政策》、《权限列表》、《游戏许可和隐私保护协议》
         用户协议和隐私政策 = Template(r"tpl1735018819008.png", record_pos=(0.004, -0.135), resolution=(960, 540))
@@ -957,13 +957,13 @@ class wzry_task:
             self.Tool.existsTHENtouch(self.图片.返回按钮[0], f"{fun_name(1)}.{fun_name(2)}返回按钮", savepos=True)
             self.Tool.LoopTouch(self.图片.返回按钮[0], "返回按钮", loop=3, savepos=False)
         # 确定图标
-        self.确定按钮()
+        self.点击确定按钮()
         #
         if exists(Template(r"tpl1693886922690.png", record_pos=(-0.005, 0.114), resolution=(960, 540))):
             self.Tool.existsTHENtouch(Template(r"tpl1693886962076.png", record_pos=(0.097, 0.115), resolution=(960, 540)), "确定按钮")
         if not self.check_run_status():
             return True
-        self.关闭按钮()
+        self.点击关闭按钮()
         self.网络优化()
         # 各种异常，异常图标,比如网速不佳、画面设置、
         self.Tool.existsTHENtouch(Template(r"tpl1692951507865.png", record_pos=(-0.106, 0.12), resolution=(960, 540), threshold=0.9), "关闭画面设置")
@@ -1799,7 +1799,7 @@ class wzry_task:
             # 万一点到某处, 这是返回按钮
             if self.Tool.existsTHENtouch(Template(r"tpl1689667050980.png", record_pos=(-0.443, -0.251), resolution=(960, 540))):
                 sleep(2)
-                self.确定按钮()
+                self.点击确定按钮()
                 sleep(5)
             #
             # 调用结束人机匹配时, 通常是刚结束对战, 无需判断房间中还是大厅中的,
@@ -2288,8 +2288,8 @@ class wzry_task:
             return self.祈愿入口(times)
         sleep(10)
         #
-        self.关闭按钮()
-        self.确定按钮()
+        self.点击关闭按钮()
+        self.点击确定按钮()
         #
         # 开始随机点击活动的页面，遇到X号，则点击
         for i in range(20, -14, -7):
@@ -2333,8 +2333,8 @@ class wzry_task:
             return self.祈愿入口(times)
         sleep(10)
         #
-        self.关闭按钮()
-        self.确定按钮()
+        self.点击关闭按钮()
+        self.点击确定按钮()
         #
         # 开始随机点击活动的页面，遇到X号，则点击
         for i in range(25, -20, -10):
@@ -2676,8 +2676,8 @@ KPL观赛入口: !!python/tuple
         self.Tool.LoopTouch(确定按钮, "确定按钮")
         #
         # 若之后出现新的弹窗, 可能需要开启这两个注释, 并插入到后面的间隔中
-        # self.关闭按钮()
-        # self.确定按钮()
+        # self.点击关闭按钮()
+        # self.点击确定按钮()
         #
         # 新赛季增加的领取入口,全部采用精确坐标, 不再识别
         本周任务 = Template(r"tpl1703755716888.png", record_pos=(-0.175, -0.192), resolution=(960, 540))
@@ -2702,10 +2702,10 @@ KPL观赛入口: !!python/tuple
             sleep(5)
         self.Tool.LoopTouch(确定按钮, "确定按钮")
         #
-        self.关闭按钮()
-        self.确定按钮()
+        self.点击关闭按钮()
+        self.点击确定按钮()
         self.Tool.LoopTouch(返回, "返回")
-        self.确定按钮()
+        self.点击确定按钮()
         return True
 
     def 每日礼包_邮件礼包(self, times=0):
