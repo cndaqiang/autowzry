@@ -644,7 +644,7 @@ class wzry_task:
             # 进不去就重启
             return self.重启并登录(10)
         #
-        if self.set_timelimit(istep=times, init=times == 0, timelimit=60*2, nstep=10, touch同步=True, timekey="太久无法进入大厅"):
+        if self.set_timelimit(istep=times, init=times == 0, timelimit=60*60*2, nstep=10, touch同步=True, timekey="太久无法进入大厅"):
             TimeECHO("两小时进不去, 要么代码不适配了, 或者游戏账号退出了")
             self.Tool.touchfile(self.重新登录FILE)
 
