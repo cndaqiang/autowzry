@@ -476,6 +476,7 @@ class wzry_task:
         self.当前界面 = "未知"
         self.当前状态 = "未知"  # ["领取礼包","对战状态","未知","重新启动","状态检查"] 根据状态, 减少一些界面的判断，只在主函数中进行设备，避免子函数设置带来的混乱
         self.Tool.timelimit(timekey="当前界面", init=True)
+        self.Tool.timelimit(timekey="账号在线", init=True)
         self.Tool.save_dict(self.Tool.var_dict, self.dictfile)
 
     # 用不到，当二次开发调用wzry_task时, 可在init后，设置这个设置参数
@@ -644,7 +645,7 @@ class wzry_task:
             # 进不去就重启
             return self.重启并登录(10)
         #
-        if self.set_timelimit(istep=times, init=times == 0, timelimit=60*60*2, nstep=10, touch同步=True, timekey="太久无法进入大厅"):
+        if self.Tool.timelimit(timekey="账号在线", limit=60*60*2, init=False):
             TimeECHO("两小时进不去, 要么代码不适配了, 或者游戏账号退出了")
             self.Tool.touchfile(self.重新登录FILE)
 
@@ -2933,12 +2934,6 @@ KPL观赛入口: !!python/tuple
         存在, self.图片.大厅元素 = self.Tool.存在任一张图(self.图片.大厅元素, "大厅元素")
         #
         if 存在:
-            self.当前界面 = "大厅中"
-            self.Tool.timelimit(timekey="当前界面", init=True)
-        else:
-            self.当前界面 = "未知"
-        #
-        if 存在:
             self.Tool.var_dict["大厅判断.正确识别时间"] = time.time()
             self.Tool.var_dict["大厅判断.活动更新时间"] = 0
         else:
@@ -2962,6 +2957,14 @@ KPL观赛入口: !!python/tuple
                         self.Tool.var_dict["大厅判断.活动更新时间"] = time.time()
                         存在 = True
         self.Tool.save_dict(self.Tool.var_dict, self.dictfile)
+        #
+        if 存在:
+            self.当前界面 = "大厅中"
+            self.Tool.timelimit(timekey="当前界面", init=True)
+            self.Tool.timelimit(timekey="账号在线", init=True)
+        else:
+            self.当前界面 = "未知"
+        #
         return 存在
 
     def 判断房间中(self, 处理=False, acce=False):
