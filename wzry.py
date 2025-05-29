@@ -3006,6 +3006,7 @@ KPL观赛入口: !!python/tuple
         if 存在:
             self.当前界面 = "房间中"
             self.Tool.timelimit(timekey="当前界面", init=True)
+            self.Tool.timelimit(timekey="账号在线", init=True)
             # 减少判断次数,不用担心图片太少的问题,每日会重新更新图片
             del self.图片.房间元素[1:]
             if len(self.图片.房间翻页活动元素) > 0:
@@ -3051,6 +3052,7 @@ KPL观赛入口: !!python/tuple
         if 对战中:
             self.当前界面 = "对战中"
             self.Tool.timelimit(timekey="当前界面", init=True)
+            self.Tool.timelimit(timekey="账号在线", init=True)
         else:
             self.当前界面 = "未知"
         #
@@ -3256,6 +3258,7 @@ KPL观赛入口: !!python/tuple
         if 对战中:
             self.当前界面 = "对战中_模拟战"
             self.Tool.timelimit(timekey="当前界面", init=True)
+            self.Tool.timelimit(timekey="账号在线", init=True)
         else:
             self.当前界面 = "未知"
         #
@@ -3551,6 +3554,7 @@ KPL观赛入口: !!python/tuple
                         if lefthour >= 4:
                             TimeECHO(f"存在[{self.重新登录FILE}],每4h重新登录一次")
                             self.移动端.重启重连设备(4*60*60)
+                            self.Tool.timelimit(timekey="账号在线", init=True)
                             self.重启并登录()
                             continue
                         else:
