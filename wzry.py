@@ -498,7 +498,7 @@ class wzry_task:
     def 项目介绍(self):
         # 项目介绍信息
         # info
-        encoded_code = '6aG555uu5Li76aG1OiBodHRwczovL2dpdGh1Yi5jb20vY25kYXFpYW5nL2F1dG93enJ5IAog6L+Q6KGM5pWZ56iLKOiuv+mXruWvhueggTogYXV0b3d6cnkpOmh0dHBzOi8vYXV0b3d6cnkucGFnZXMuZGV2L2d1aWRlL2luc3RhbGwv'
+        encoded_code = '6aG555uu5Li76aG1OiBodHRwczovL2dpdGh1Yi5jb20vY25kYXFpYW5nL2F1dG93enJ5IArov5DooYzmlZnnqIso6K6/6Zeu5a+G56CBOiBhdXRvd3pyeSk6aHR0cHM6Ly9hdXRvd3pyeS5wYWdlcy5kZXYvZ3VpZGUvaW5zdGFsbC8='
         try:
             import base64
             decoded_code = base64.b64decode(encoded_code).decode("utf-8")
