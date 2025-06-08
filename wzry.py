@@ -645,11 +645,6 @@ class wzry_task:
             # 进不去就重启
             return self.重启并登录(10)
         #
-        if self.Tool.timelimit(timekey="账号在线", limit=60*60*2, init=False):
-            TimeECHO("两小时进不去, 要么代码不适配了, 或者游戏账号退出了")
-            self.Tool.touchfile(self.重新登录FILE)
-
-        #
         times = times+1
         TimeECHO(f"{fun_name(2)}.尝试进入大厅{times}")
         #
@@ -721,6 +716,10 @@ class wzry_task:
         if not self.check_run_status():
             return True
         #
+        if self.Tool.timelimit(timekey="账号在线", limit=60*60*2, init=False):
+            TimeECHO("两小时进不去, 要么代码不适配了, 或者游戏账号退出了")
+            self.Tool.touchfile(self.重新登录FILE)
+            return True
         # 次数上限/时间上限，则重启
         if self.set_timelimit(istep=times, init=times == 0, timelimit=60*20, nstep=10, touch同步=True):
             content = f"登录游戏超时退出"
