@@ -640,7 +640,7 @@ class wzry_task:
             return True
         #
         # 次数上限/时间上限，则重启
-        if self.set_timelimit(istep=times, init=times == 0, timelimit=60*5, nstep=10, touch同步=True):
+        if self.set_timelimit(istep=times, init=times == 0, timelimit=60*5, nstep=10, touch同步=False):
             self.图片 = wzry_figure(Tool=self.Tool)
             # 进不去就重启
             return self.重启并登录(10)
@@ -676,7 +676,7 @@ class wzry_task:
             if self.大厅严格判断():
                 return True
         # 对战页面
-        if times < 2:
+        if times < 2 and self.当前状态 not in ["领取礼包"]:
             处理对战 = "模拟战" in self.对战模式
             if self.触摸对战:
                 处理对战 = True
@@ -690,7 +690,7 @@ class wzry_task:
         #
         # 房间
         返回图标 = Template(r"tpl1692949580380.png", record_pos=(-0.458, -0.25), resolution=(960, 540), threshold=0.9)
-        if times < 2 and self.判断房间中(处理=False):
+        if times < 2 and self.当前状态 not in ["重新启动"] and self.判断房间中(处理=False):
             self.Tool.LoopTouch(返回图标, "返回图标", loop=3, savepos=False)
             self.点击确定按钮()
             self.Tool.LoopTouch(返回图标, "返回图标", loop=3, savepos=False)
@@ -717,7 +717,7 @@ class wzry_task:
             return True
         #
         if self.Tool.timelimit(timekey="账号在线", limit=60*60*2, init=False):
-            TimeECHO("两小时进不去, 要么代码不适配了, 或者游戏账号退出了")
+            TimeECHO("两小时进不去, 可能是游戏账号退出了, 或者代码不适配了(可以尝试下载最新的代码、手动进入大厅或者房间后再启动本程序)")
             self.Tool.touchfile(self.重新登录FILE)
             return True
         # 次数上限/时间上限，则重启
