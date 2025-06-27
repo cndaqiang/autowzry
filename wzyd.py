@@ -108,6 +108,34 @@ class wzyd_libao:
         self.营地登录元素.append(Template(r"tpl1708393355383.png", record_pos=(-0.004, 0.524), resolution=(540, 960)))
         self.营地登录元素.append(Template(r"tpl1708393749272.png", record_pos=(-0.002, 0.519), resolution=(540, 960)))
         #
+        # 测试是否支持pico, 目前仅针对安卓设备开发
+        self.pocosupport = False
+        if not self.IOS:
+            try:
+                from poco.drivers.android.uiautomation import AndroidUiautomationPoco
+                self.poco = AndroidUiautomationPoco(use_airtest_input=True, screenshot_each_action=False)
+                """
+                # https://developer.aliyun.com/article/1446075
+                use_airtest_input=True是指，使用Airtest去执行点击操作，好处是，会在日志里面记录一条log记录，这样生成报告时，就能在报告上显示这个点击记录。
+                如果初始化Android poco时，不传入这个参数，默认use_airtest_input=False，则不使用Airtest去执行点击操作，而是调用Android接口去点击，这时候不会在日志里面记录一条点击的log，所以会导致报告里面丢失这个点击步骤。
+                所以，如果同学们不在意log内容，或者无需生成测试报告，这个参数可以不传。
+                但如果同学们需要生成测试报告，在初始化Android poco时，还是需要把use_airtest_input=True这个参数传上去
+                """
+                self.pocosupport = True
+                TimeECHO("⚠⚠⚠本次运行,将优先采用poco进行识别")
+                TimeECHO("若poco模式遇到问题, 请关闭 self.pocosupport = False")
+            except ImportError:
+                traceback.print_exc()
+                self.pocosupport = False
+                TimeECHO("若希望开启poco,推荐安装python 3.7环境")
+                TimeECHO("运行以下命令安装：")
+                TimeECHO("conda create -n air37 python=3.7")
+                TimeECHO("conda activate air37")
+                TimeECHO("python -m pip install pocoui")
+                TimeECHO("python -m pip install airtest_mobileauto")
+                TimeECHO("python .\wzyd.py .\config.win.yaml")
+
+        #
         self.初始化成功 = False
 
     #
@@ -119,8 +147,55 @@ class wzyd_libao:
     def run(self):
         return self.RUN()
     #
+    # poco 相关
+    def poco_exit_text(self,strlist):
+        # 如果是字符串，转换为单元素列表
+        if isinstance(strlist, str):
+            strlist = [strlist]
+        for istr in strlist:
+            if self.poco(text=istr).exists():
+                TimeECHO(f"poco: 找到text == {istr}")
+                return True
+        return False
 
+    def poco_exit_id(self,strlist):
+        # 如果是字符串，转换为单元素列表
+        if isinstance(strlist, str):
+            strlist = [strlist]
+        for istr in strlist:
+            if self.poco(istr).exists():
+                TimeECHO(f"poco: 找到id == {istr}")
+                return True
+        return False        
+    
+    def poco_exit_text_then_touch(self,strlist):
+        # 如果是字符串，转换为单元素列表
+        if isinstance(strlist, str):
+            strlist = [strlist]
+        for istr in strlist:
+            if self.poco(text=istr).exists():
+                self.poco(text=istr).click()
+                TimeECHO(f"poco: touch(text == {istr})")
+                sleep(0.1)
+                return True
+        return False
+    
+    def poco_exit_id_then_touch(self,strlist):
+        # 如果是字符串，转换为单元素列表
+        if isinstance(strlist, str):
+            strlist = [strlist]
+        for istr in strlist:
+            if self.poco(istr).exists():
+                self.poco(istr).click()
+                TimeECHO(f"poco: touch({istr})")
+                sleep(0.1)
+                return True
+        return False
+    
     def 判断营地大厅中(self):
+        #
+        if self.pocosupport:
+            return self.poco_exit_text(["首页"])
         #
         # 不用添加底部所有的图标, 活动时肯定全部改变
         self.营地大厅元素.append(self.社区界面图标)
@@ -130,6 +205,10 @@ class wzyd_libao:
     #
 
     def 判断营地登录中(self):
+        #
+        if self.pocosupport:
+            return self.poco_exit_text(["com.tencent.gamehelper.smoba:id/sv_license","com.tencent.gamehelper.smoba:id/tv_reject","com.tencent.gamehelper.smoba:id/tv_agree","获取验证码"])
+        #
         存在, self.营地登录元素 = self.Tool.存在任一张图(self.营地登录元素, "营地登录元素")
         return 存在
     #
@@ -372,7 +451,20 @@ class wzyd_libao:
         if times > 10:
             return False
         #
-        self.Tool.existsTHENtouch(self.资讯入口, "资讯入口.推荐", savepos=True)
+        if self.pocosupport:
+            if not self.poco_exit_text_then_touch(["首页"]):
+                return self.营地任务_浏览资讯(times)
+            #
+            if not self.poco_exit_text_then_touch(["推荐"]):
+                return self.营地任务_浏览资讯(times)
+        else:
+            self.Tool.existsTHENtouch(self.资讯入口, "资讯入口.推荐", savepos=True)
+        #
+        # 
+        if self.pocosupport:
+            pass
+            # 暂时没找到从poco进行咨询页面的功能，强制点击特定位置是可以行的
+            # 暂时保留下面的图片识别，或者固定位置点击
         资讯入口图标 = []
         资讯入口图标.append(Template(r"tpl1724584561119.png", record_pos=(-0.419, -0.433), resolution=(540, 960)))
         资讯入口图标.append(Template(r"tpl1724681918901.png", record_pos=(-0.115, -0.213), resolution=(540, 960)))
@@ -386,6 +478,15 @@ class wzyd_libao:
                 self.Tool.var_dict["资讯入口图标"] = (250, 650)
         #
         self.Tool.existsTHENtouch(资讯入口图标[0], "资讯入口图标", savepos=True)
+        #
+        #
+        if self.pocosupport:
+            self.poco_exit_id_then_touch(['com.tencent.gamehelper.smoba:id/img_like'])
+            # 转发到动态
+            if self.poco_exit_id_then_touch(["com.tencent.gamehelper.smoba:id/img_share"]):
+                self.poco_exit_text_then_touch(["转发到动态"])
+                self.poco_exit_id_then_touch(['com.tencent.gamehelper.smoba:id/publish'])
+        # 下面是评论区的点赞
         点赞图标 = []
         点赞图标.append(Template(r"tpl1717046512030.png", record_pos=(0.424, 0.02), resolution=(540, 960)))
         点赞图标.append(Template(r"tpl1724681888775.png", record_pos=(0.417, -0.243), resolution=(540, 960)))
@@ -447,9 +548,18 @@ class wzyd_libao:
         if not self.APPOB.前台APP(2):
             return self.营地战令经验(times)
         #
-        # 都保存位置,最后进不去再return
-        self.Tool.existsTHENtouch(self.游戏界面图标, "游戏界面图标", savepos=True)
+        #
+        if self.pocosupport:
+            if not self.poco_exit_text_then_touch(["游戏"]):
+                return self.营地战令经验(times)
+        else:
+            # 都保存位置,最后进不去再return
+            self.Tool.existsTHENtouch(self.游戏界面图标, "游戏界面图标", savepos=True)
         sleep(5)
+        # 
+        if self.pocosupport:
+            pass
+            # 暂时没找到从poco进入营地和点击
         #
         正式服判断图标 = Template(r"tpl1715609808723.png", record_pos=(-0.217, -0.044), resolution=(540, 960))
         正式服大头图标 = Template(r"tpl1715610763289.png", record_pos=(-0.281, -0.8), resolution=(540, 960))
@@ -473,7 +583,7 @@ class wzyd_libao:
         if self.Tool.existsTHENtouch(重新登录, "重新登录"):
             self.Tool.touchfile("重新登录营地战令.txt")
             return
-        #
+        # 
         战令任务 = []
         战令任务.append(Template(r"tpl1715609874404.png", record_pos=(-0.25, -0.706), resolution=(540, 960)))
         战令任务.append(Template(r"tpl1724905564530.png", record_pos=(-0.23, -0.694), resolution=(540, 960)))
@@ -537,8 +647,13 @@ class wzyd_libao:
         if not self.APPOB.前台APP(2):
             return self.体验服礼物(times)
         #
-        # 都保存位置,最后进不去再return
-        self.Tool.existsTHENtouch(self.游戏界面图标, "游戏界面图标", savepos=True)
+        #
+        if self.pocosupport:
+            if not self.poco_exit_text_then_touch(["游戏"]):
+                return self.营地战令经验(times)
+        else:
+            # 都保存位置,最后进不去再return
+            self.Tool.existsTHENtouch(self.游戏界面图标, "游戏界面图标", savepos=True)
         sleep(5)
         # 判断是否在体验服框架
         # 这里需要提前手动把体验服加到选择界面
@@ -566,12 +681,27 @@ class wzyd_libao:
                 sleep(6*1.5)  # 1.5分钟
             else:
                 sleep(5)
-            if exists(奖励兑换网页图标):
+            #
+            if self.pocosupport:
+                if self.poco_exit_text(["奖励兑换"]):
+                    break
+            elif exists(奖励兑换网页图标):
                 break
-        if not self.Tool.existsTHENtouch(奖励兑换网页图标, "奖励兑换网页图标", savepos=False):
+        if self.pocosupport:
+            if not self.poco_exit_text_then_touch(["奖励兑换"]):
+                sleep(20)
+                if not self.poco_exit_text_then_touch(["奖励兑换"]):
+                    return self.体验服礼物(times)
+        elif not self.Tool.existsTHENtouch(奖励兑换网页图标, "奖励兑换网页图标", savepos=False):
             sleep(20)
             if not self.Tool.existsTHENtouch(奖励兑换网页图标, "奖励兑换网页图标", savepos=False):
                 return self.体验服礼物(times)
+        #
+        # 
+        if self.pocosupport:
+            pass
+            # 下面的不好弄
+        
         # 有时候会让重新登录
         重新登录 = Template(r"tpl1702610976931.png", record_pos=(0.0, 0.033), resolution=(540, 960))
         if self.Tool.existsTHENtouch(重新登录, "重新登录"):
@@ -642,11 +772,22 @@ class wzyd_libao:
         #
         # 每日签到
         self.APPOB.重启APP(10)
+        #
+        if self.pocosupport:
+            self.poco_exit_text_then_touch(["我"])
+        else:
+            self.Tool.existsTHENtouch(self.个人界面图标, "WZYD个人界面", savepos=True)
         sleep(10)
-        self.Tool.existsTHENtouch(self.个人界面图标, "WZYD个人界面", savepos=True)
-        sleep(5)
-        if not self.Tool.existsTHENtouch(self.每日福利图标, "WZYD每日福利", savepos=False):
+        #
+        if self.pocosupport:
+            if not self.poco_exit_text_then_touch(["每日福利"]):
+                return self.每日签到任务(times)
+        elif not self.Tool.existsTHENtouch(self.每日福利图标, "WZYD每日福利", savepos=False):
             return self.每日签到任务(times)
+        #
+        #
+        if self.pocosupport:
+            pass        
         sleep(5)
         self.Tool.existsTHENtouch(self.一键领取按钮, "一键领取按钮")
         # 新款签到入口
@@ -662,7 +803,11 @@ class wzyd_libao:
         return True
 
     def 营地币兑换碎片(self, times=1):
+        """
+        20250627 停止维护
+        """
         TimeECHO(f"营地币兑换碎片{times}")
+        TimeECHO(f"20250627 停止维护")
         #
         if self.Tool.存在同步文件():
             return True
@@ -686,11 +831,17 @@ class wzyd_libao:
         if not self.APPOB.前台APP(2):
             return self.营地币兑换碎片(times)
         #
-        sleep(10)
-        self.Tool.existsTHENtouch(self.个人界面图标, "个人界面")
+        #
+        if self.pocosupport:
+            if not self.poco_exit_text_then_touch(["每日福利"]):
+                return self.每日签到任务(times)
+        elif not self.Tool.existsTHENtouch(self.每日福利图标, "WZYD每日福利", savepos=False):
+            return self.每日签到任务(times)
         sleep(5)
-        self.Tool.existsTHENtouch(self.每日福利图标, "每日福利")
-        sleep(5)
+        #
+        #
+        if self.pocosupport:
+            pass
         self.Tool.existsTHENtouch(self.一键领取按钮, "一键领取按钮")
         # 老款营地币兑换
         if not self.Tool.existsTHENtouch(Template(r"tpl1706338003287.png", record_pos=(0.389, 0.524), resolution=(540, 960)), "营地币兑换"):
