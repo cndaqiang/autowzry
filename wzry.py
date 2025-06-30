@@ -1918,6 +1918,7 @@ class wzry_task:
             # 外置礼包，暂无手册，遇到问题，请自行调试
             self.外置礼包_WZYD = False
             self.外置礼包_体验服 = False
+            self.外置礼包_体验币WEB = False
             # 以下礼包不再第一时间随着游戏更新，如果遇到问题，请自行调试
             self.礼包功能_战队礼包 = False
             self.礼包功能_商城礼包 = False
@@ -1943,6 +1944,9 @@ class wzry_task:
         if 强制领取 or not self.组队模式:
             if self.外置礼包_WZYD:
                 self.每日礼包_WZYD()
+            #
+            if self.外置礼包_体验币WEB:
+                self.每日礼包_体验币WEB()
             #
             if self.外置礼包_体验服:
                 self.体验服更新()
@@ -2822,6 +2826,36 @@ KPL观赛入口: !!python/tuple
             return False
     #
 
+    def 每日礼包_体验币WEB(self):
+        pass
+        if self.Tool.timelimit("网页端体验币礼包", limit=60*60*3, init=False):
+            TimeECHO(f"{fun_name(1)}")
+            self.APPOB.关闭APP()
+            """
+            此函数基于我的另一个WEB签到仓库进行的开发: https://github.com/MobileAutoFlow/autoansign
+            若此函数的功能出现异常, 可以从上述仓库看最新的更新状态
+            """
+            try:
+                from autoansign import web_tiyanbi
+                # 所有参数通过airtest_mobiel的Setting传递
+                tag_object = web_tiyanbi()  # 假设类构造函数不需要参数
+                # 使用类来创建一个对象实例
+                tag_object.APPOB.big=False
+                tag_object.run()
+                tag_object.stop()
+            except:
+                traceback.print_exc()
+                print("[ 每日礼包_体验币WEB ] 是基于 [autoansign] 进行开发，请安装 autoansign")
+                print("运行以下命令安装：")
+                print("python -m pip install autoansign --upgrade")
+                print("若仍有问题, 请尝试源码安装/运行: https://github.com/MobileAutoFlow/autoansign")
+            #
+            # 修正某些模拟器, 运行完web后强制改变分辨率的问题
+            self.移动端.resolution = (max(self.移动端.resolution), min(self.移动端.resolution))
+        else:
+            TimeECHO(f"时间太短,暂时不{fun_name(1)}")
+            return False
+        
     def 体验服更新(self):
         if self.Tool.timelimit("体验服更新", limit=60*60*3, init=False):
             TimeECHO(f"{fun_name(1)}")

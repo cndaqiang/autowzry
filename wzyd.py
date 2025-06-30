@@ -39,6 +39,14 @@ except ImportError:
 
 class wzyd_libao:
     def __init__(self):
+        info = """
+        营地的领额外战令经验功能也被官方下线了, 
+        现在营地的唯一有价值的功能就是用体验币换皮肤碎片了，
+        但是这个功能使用浏览器就可以完成，因此营地的自动化也停止开发。
+        体验币的功能准备在浏览器上开发。后续营地恢复战令经验、皮肤碎片的功能，再考虑继续维护wzyd.py
+        """
+        TimeECHO(info)
+        #
         # 静态资源
         current_dir = os.path.dirname(os.path.abspath(__file__))
         assets_dir = os.path.join(current_dir, 'assets')
