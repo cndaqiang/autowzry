@@ -523,6 +523,9 @@ class wzyd_libao:
 
     def 营地战令经验(self, times=0):
         #
+        TimeECHO(f"营地战令经验/营地战令任务于2025-04-01被官方下架, return")
+        return True
+        #
         # 第一次，需要手动点击一下，开启战令
         if self.Tool.存在同步文件():
             return True
