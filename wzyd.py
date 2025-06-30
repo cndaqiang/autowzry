@@ -230,7 +230,7 @@ class wzyd_libao:
             return False
         #
         self.礼包功能_营地币换碎片 = True
-        self.礼包功能_体验币换碎片 = True
+        self.礼包功能_体验币换碎片 = False
         run_class_command(self=self, command=self.Tool.readfile(self.营地初始化FILE))
         #
         # 判断网络情况
@@ -634,6 +634,9 @@ class wzyd_libao:
 
     def 体验服礼物(self, times=1):
         #
+        """
+        停更
+        """
         if self.Tool.存在同步文件():
             return True
         #
