@@ -1759,7 +1759,7 @@ class wzry_task:
                     sleep(10)
                     if self.Tool.existsTHENtouch(Template(r"tpl1689667256973.png", record_pos=(0.094, 0.115), resolution=(960, 540)), "确定返回大厅"):
                         sleep(10)
-                    if self.判断大厅中(acce=True):
+                    if self.判断大厅中(acce=False,检测更新=True):
                         return
             #
             # 避免选择英雄等原因导致进入对战页面延迟的问题
