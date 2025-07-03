@@ -50,7 +50,7 @@ setup(
     url='https://github.com/cndaqiang/autowzry',
     install_requires=[
         'airtest-mobileauto>=2.1.3',
-        'autoansign>=1.2',
+        # 'autoansign>=1.2',
     ],
     entry_points={
         'console_scripts': [

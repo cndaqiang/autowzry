@@ -2834,6 +2834,8 @@ KPL观赛入口: !!python/tuple
             """
             此函数基于我的另一个WEB签到仓库进行的开发: https://github.com/MobileAutoFlow/autoansign
             若此函数的功能出现异常, 可以从上述仓库看最新的更新状态
+            需要自己先打开浏览器登陆一遍账号
+            Note: 登陆后会自动下线WZRY的APP, 残废设计, 因此: 此函数于25-07-01停止开发,享年1天.
             """
             try:
                 from autoansign import web_tiyanbi
@@ -3577,6 +3579,8 @@ KPL观赛入口: !!python/tuple
                         self.Tool.touchfile(self.无法进行组队FILE, content=content)
                     #
                     if not self.内置循环:
+                        TimeECHO("非内置循环, 领取礼包后, 结束脚本")
+                        self.每日礼包(强制领取=True)
                         return self.END(content=content)
                     #
                     startclock = self.对战时间[0]
