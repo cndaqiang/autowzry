@@ -1973,6 +1973,7 @@ class wzry_task:
 
     def 王者礼包_点击继续(self):
         # S39赛季更新, 领取礼包后不再是点击黄色的确定按钮,而是点击屏幕继续
+        # S40赛季更新, 又把蓝色确定按钮加回来了....
         sleep(5)
         # 屏幕右下角
         self.Tool.touch_record_pos(record_pos=(0.321, 0.226), resolution=self.移动端.resolution, keystr=f"{fun_name(1)}.屏幕中心")
@@ -2254,6 +2255,9 @@ class wzry_task:
             self.Tool.touch_record_pos(免费领取.record_pos, self.移动端.resolution, f"商城.免费领取")
         self.王者礼包_点击继续()
         sleep(10)
+        if self.Tool.existsTHENtouch(Template(r"tpl1694441190629.png", record_pos=(0.0, 0.165), resolution=(960, 540)), "蓝色确定兑换"):
+            sleep(5)
+
         #
         self.Tool.LoopTouch(返回, "返回")
         #
