@@ -498,6 +498,13 @@ class wzry_task:
     def 项目介绍(self):
         # 项目介绍信息
         # info
+                #
+        try:
+            import version
+            last_modified = version.last_modified
+        except:
+            last_modified = "Unknow"
+
         encoded_code = '6aG555uu5Li76aG1OiBodHRwczovL2dpdGh1Yi5jb20vY25kYXFpYW5nL2F1dG93enJ5IArov5DooYzmlZnnqIso6K6/6Zeu5a+G56CBOiBhdXRvd3pyeSk6aHR0cHM6Ly9hdXRvd3pyeS5wYWdlcy5kZXYvZ3VpZGUvaW5zdGFsbC8='
         try:
             import base64
@@ -513,6 +520,7 @@ class wzry_task:
                      "本项目完全免费，请警惕任何收费信息。",
                      "本项目无任何交流群组，请在GitHub交流。",
                      decoded_code,
+                    f"当前版本提交时间：{last_modified}",
                      "<"*20
                      ]
         content = "\n\n"
@@ -3469,7 +3477,7 @@ KPL观赛入口: !!python/tuple
     def RUN(self):  # 程序入口
         self.新的一天 = False
         self.广播参数()
-        #
+
         while True:
             self.当前状态 = "状态检查"
             # ------------------------------------------------------------------------------
