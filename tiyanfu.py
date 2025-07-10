@@ -78,7 +78,7 @@ class tiyanfu():
         self.体验服初始化FILE = f"WZRY.ce.{self.mynode}.临时初始化.txt"
         self.内置循环 = False  # 是否每日循环执行此脚本
         #
-        self.timelimit = 60*60*2.0
+        self.timelimit = 60*60*0.5
         # 更新时间
         self.对战时间 = [0.1, 23.9]
 

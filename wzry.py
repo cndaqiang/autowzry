@@ -472,12 +472,19 @@ class wzry_task:
         self.构建循环参数(self.上循环参数)
         #
         # 某些加速模块的初始化
+        self.init_timelimit()
+
+
+    # 在执行外部礼包、礼包等非持续对战时, 或者程序初始化时, 需要将一些时间参数进行重置, 避免错误判断
+    def init_timelimit(self):
         # 如果已经判断在房间中了,短时间内执行相关函数，不再进行判断
         self.当前界面 = "未知"
         self.当前状态 = "未知"  # ["领取礼包","对战状态","未知","重新启动","状态检查"] 根据状态, 减少一些界面的判断，只在主函数中进行设备，避免子函数设置带来的混乱
         self.Tool.timelimit(timekey="当前界面", init=True)
         self.Tool.timelimit(timekey="账号在线", init=True)
         self.Tool.save_dict(self.Tool.var_dict, self.dictfile)
+
+
 
     # 用不到，当二次开发调用wzry_task时, 可在init后，设置这个设置参数
     def 设置参数(self, **kwargs):
@@ -1949,6 +1956,7 @@ class wzry_task:
             self.Tool.timedict["体验服更新"] = 0
         #
         # 在组队的过程中，不领取营地礼包，以及更新体验服
+        # 领取这些礼包会导致时间过了很久, 最终影响wzry_task主进程的时间差
         if 强制领取 or not self.组队模式:
             if self.外置礼包_WZYD:
                 self.每日礼包_WZYD()
@@ -1960,6 +1968,7 @@ class wzry_task:
                 self.体验服更新()
         #
         # 王者APP礼包
+        self.init_timelimit()
         self.王者礼包()
     #
 
