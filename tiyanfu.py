@@ -176,12 +176,23 @@ class tiyanfu():
         self.Tool.existsTHENtouch(确定协议, "确定协议", savepos=False)
         self.Tool.existsTHENtouch(同意协议, "同意协议", savepos=False)
         #
-        开始游戏 = Template(r"tpl1723551226168.png", record_pos=(-0.003, 0.155), resolution=(960, 540))
-        if self.Tool.existsTHENtouch(开始游戏, "开始游戏", savepos=False):
+        # 现在打开可能会放一段视频，这个随意点击也为了让界面换一下
+        self.Tool.touch_record_pos(record_pos=(1, 1), resolution=self.移动端.resolution, keystr=f"{fun_name(1)}.屏幕中心")
+        sleep(10)
+        #
+        登录界面开始游戏图标 = Template(r"tpl1692947242096.png", record_pos=(-0.004, 0.158), resolution=(960, 540), threshold=0.9)
+        if self.Tool.existsTHENtouch(登录界面开始游戏图标, "登录界面开始游戏图标", savepos=False):
             sleep(waittime)
-        if self.Tool.existsTHENtouch(开始游戏, "开始游戏", savepos=False):
+        if self.Tool.existsTHENtouch(登录界面开始游戏图标, "登录界面开始游戏图标", savepos=False):
             TimeECHO("还存在开始游戏，有可能体验服正在更新")
             return self.run(times)
+        #
+        # 适合王者活动更改登录界面图标时
+        登录界面年龄提示 = Template(r"tpl1729676388436.png", record_pos=(0.382, 0.198), resolution=(960, 540))
+        if exists(登录界面年龄提示):
+            self.Tool.touch_record_pos(record_pos=登录界面开始游戏图标.record_pos,
+                                       resolution=self.移动端.resolution, keystr=f"登录界面开始游戏图标")
+            sleep(10)
         #
         # 进入游戏大厅偶尔会有关闭按钮
         self.Tool.LoopTouch(关闭按钮, "关闭按钮", loop=5, savepos=False)
@@ -194,9 +205,15 @@ class tiyanfu():
         self.大厅元素.append(Template(r"tpl1723551299495.png", record_pos=(-0.461, -0.249), resolution=(960, 540)))
         self.大厅元素.append(Template(r"tpl1723551309461.png", record_pos=(0.354, -0.252), resolution=(960, 540)))
         大厅中, self.大厅元素 = self.Tool.存在任一张图(self.大厅元素, "体验服.大厅元素")
+        大厅对战图标 = Template(r"tpl1723219359665.png", record_pos=(-0.122, 0.133), resolution=(960, 540))
+        进入5v5匹配 = Template(r"tpl1689666019941.png", record_pos=(0.331, 0.049), resolution=(960, 540))
         if 大厅中:
             return True
         else:
+            # 万一大厅更新, 点击进人机界面看看
+            if self.Tool.existsTHENtouch(大厅对战图标, "大厅对战", savepos=True):
+                if exists(进入5v5匹配):
+                    return True
             return self.run(times)
 
     def looprun(self, times=0):
