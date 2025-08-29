@@ -474,8 +474,8 @@ class wzry_task:
         # 某些加速模块的初始化
         self.init_timelimit()
 
-
     # 在执行外部礼包、礼包等非持续对战时, 或者程序初始化时, 需要将一些时间参数进行重置, 避免错误判断
+
     def init_timelimit(self):
         # 如果已经判断在房间中了,短时间内执行相关函数，不再进行判断
         self.当前界面 = "未知"
@@ -484,9 +484,8 @@ class wzry_task:
         self.Tool.timelimit(timekey="账号在线", init=True)
         self.Tool.save_dict(self.Tool.var_dict, self.dictfile)
 
-
-
     # 用不到，当二次开发调用wzry_task时, 可在init后，设置这个设置参数
+
     def 设置参数(self, **kwargs):
         if not kwargs:
             return
@@ -505,7 +504,7 @@ class wzry_task:
     def 项目介绍(self):
         # 项目介绍信息
         # info
-                #
+        #
         try:
             import version
             last_modified = version.last_modified
@@ -527,7 +526,7 @@ class wzry_task:
                      "本项目完全免费，请警惕任何收费信息。",
                      "本项目无任何交流群组，请在GitHub交流。",
                      decoded_code,
-                    f"当前版本提交时间：{last_modified}",
+                     f"当前版本提交时间：{last_modified}",
                      "<"*20
                      ]
         content = "\n\n"
@@ -1388,6 +1387,7 @@ class wzry_task:
         if not self.房主:
             找到取消按钮, self.图片.房间中的取消按钮图标 = self.Tool.存在任一张图(self.图片.房间中的取消按钮图标, "房间中的取消准备按钮")
             self.Tool.timelimit(timekey=f"辅助进房{self.mynode}", limit=60*5, init=True)
+            进入房主房间次数 = 0
             while not 找到取消按钮:
                 if self.Tool.timelimit(timekey=f"辅助进房{self.mynode}", limit=60*5, init=False):
                     self.Tool.touch同步文件(self.Tool.辅助同步文件, "辅助进房超时退出")
@@ -1426,6 +1426,7 @@ class wzry_task:
                     if self.Tool.existsTHENtouch(进房间, "进房间按钮", savepos=False):
                         TimeECHO("尝试进入房间中")
                         sleep(10)
+                        进入房主房间次数 = 进入房主房间次数 + 1
                         找到取消按钮, self.图片.房间中的取消按钮图标 = self.Tool.存在任一张图(self.图片.房间中的取消按钮图标, "房间中的取消准备按钮")
                         if not 找到取消按钮:
                             TimeECHO("进入房间失败,可能是今日更新太频繁,版本不一致无法进房,需要重新登录更新")
@@ -1436,6 +1437,13 @@ class wzry_task:
                     TimeECHO("没有找到取消按钮，王者最近可能有活动更新了图标")
                     TimeECHO("检查页面是否有图片更新")
                     TimeECHO("更新后可以加速匹配速度")
+                    now = time.time()
+                    if now - self.Tool.var_dict["大厅判断.活动更新时间"] < 60*60 and 进入房主房间次数 >= 2:
+                        TimeECHO("应该是界面更新导致的没有检测到取消按钮, 应该匹配成功了")
+                        break
+                    if 进入房主房间次数 >= 3:
+                        TimeECHO("应该是界面更新导致的没有检测到取消按钮, 暂时认为匹配成功")
+                        break
 
         self.Tool.barriernode(self.mynode, self.totalnode, "结束组队进房间")
         return True
@@ -1774,7 +1782,7 @@ class wzry_task:
                     sleep(10)
                     if self.Tool.existsTHENtouch(Template(r"tpl1689667256973.png", record_pos=(0.094, 0.115), resolution=(960, 540)), "确定返回大厅"):
                         sleep(10)
-                    if self.判断大厅中(acce=False,检测更新=True):
+                    if self.判断大厅中(acce=False, 检测更新=True):
                         return
             #
             # 避免选择英雄等原因导致进入对战页面延迟的问题
@@ -2863,7 +2871,7 @@ KPL观赛入口: !!python/tuple
                 # 所有参数通过airtest_mobiel的Setting传递
                 tag_object = web_tiyanbi()  # 假设类构造函数不需要参数
                 # 使用类来创建一个对象实例
-                tag_object.APPOB.big=False
+                tag_object.APPOB.big = False
                 tag_object.run()
                 tag_object.stop()
             except:
@@ -2878,7 +2886,7 @@ KPL观赛入口: !!python/tuple
         else:
             TimeECHO(f"时间太短,暂时不{fun_name(1)}")
             return False
-        
+
     def 体验服更新(self):
         if self.Tool.timelimit("体验服更新", limit=60*60*3, init=False):
             TimeECHO(f"{fun_name(1)}")
