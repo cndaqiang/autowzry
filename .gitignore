@@ -24,7 +24,7 @@ run.0.bat
 run.1.bat
 
 #在assets中的是静态图片，根目录的是临时测试图片
-./tpl*.png
+/tpl*.png
 #clean png
 .pngtmp/
 

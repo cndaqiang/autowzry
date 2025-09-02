@@ -1435,8 +1435,7 @@ class wzry_task:
                     TimeECHO("未找到组队房间,检测主节点登录状态")
                 if not 找到取消按钮:
                     TimeECHO("没有找到取消按钮，王者最近可能有活动更新了图标")
-                    TimeECHO("检查页面是否有图片更新")
-                    TimeECHO("更新后可以加速匹配速度")
+                    TimeECHO("在多次识别失败后, 将启动备用方案进行判断.")
                     now = time.time()
                     if now - self.Tool.var_dict["大厅判断.活动更新时间"] < 60*60 and 进入房主房间次数 >= 2:
                         TimeECHO("应该是界面更新导致的没有检测到取消按钮, 应该匹配成功了")
@@ -1830,6 +1829,8 @@ class wzry_task:
             # 已返回房间或大厅
             if self.判断房间中(处理=False):
                 return
+            #
+            self.进入大厅时遇到的复杂的关闭按钮()
             if self.判断大厅中(acce=True):
                 return
             # 健康系统直接重新同步
@@ -3231,7 +3232,7 @@ KPL观赛入口: !!python/tuple
 
                     #
                     # 人人模式随机点向上走走, 去吃对面小兵的伤害
-                    if random.randint(1, 5) == 1 and self.对战模式 in ["1v1人人", "3v3匹配", "梦境大乱斗"]:
+                    if random.randint(1, 5) == 1 and self.对战模式 in ["人机闯关", "1v1人人", "3v3匹配", "梦境大乱斗"]:
                         TimeECHO("随机向上移动")
                         for _ in range(5):
                             swipe(移动pos, vector=[0.0, -0.2])
