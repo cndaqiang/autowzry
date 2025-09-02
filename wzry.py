@@ -447,6 +447,7 @@ class wzry_task:
         self.totalnode = self.totalnode_bak
         self.选择人机模式 = True  # 是否根据计算参数选择5v5的人机模式，不然就采用上一次的模式
         self.选择英雄 = True    # 是否根据参数选择英雄，不然就选择上一次使用的英雄
+        self.自动选择英雄 = False  # 循环选择分路和英雄, 就是将之前放在 运行模式.txt中的代码复制过来
         self.对战结束返回房间 = True
         self.无法进行组队 = False
         self.内置循环 = False  # 是否每日循环执行此脚本
@@ -3365,6 +3366,28 @@ KPL观赛入口: !!python/tuple
         else:
             return False
 
+    def 设置英雄字典(self):
+        # self.自动选择英雄
+        分路名称 = ["对抗", "打野", "中路", "发育", "游走"]
+        线路坐标 = [(-0.314, -0.26),  (-0.194, -0.26), (-0.069, -0.26), (0.037, -0.26),  (0.18, -0.26)]
+        # 对应分路的第(列,行)的英雄, 不同账户、对战模式的英雄数目不一样多, 根据实际情况设置对应分路的最后一个英雄的(列号,行号)
+        位置坐标 = [(6, 5), (9, 5), (4, 4), (2, 3), (4, 4)]
+        index = (self.runstep+self.mynode) % len(分路名称)
+        TimeECHO(f"本次{self.runstep}对战分路: {分路名称[index]}")
+        # 主战英雄
+        pos = 位置坐标[index]
+        参战英雄头像坐标 = (-0.552+pos[0]*0.095, -0.292+pos[1]*0.11)
+        self.Tool.cal_record_pos(参战英雄头像坐标, self.移动端.resolution, "参战英雄头像", savepos=True)
+        self.Tool.cal_record_pos(线路坐标[index], self.移动端.resolution, "参战英雄线路", savepos=True)
+        # 备战英雄, 因为对抗、打野、游走之间的英雄会互相冲突, 所以这些位置冲突的时候换成其他路(发育3,中路2)
+        index = [3, 2, 3, 2, 3][index]
+        pos = 位置坐标[index]
+        参战英雄头像坐标 = (-0.552+pos[0]*0.095, -0.292+pos[1]*0.11)
+        self.Tool.cal_record_pos(参战英雄头像坐标, self.移动端.resolution, "备战英雄头像", savepos=True)
+        self.Tool.cal_record_pos(线路坐标[index], self.移动端.resolution, "备战英雄线路", savepos=True)
+        #
+        return True
+
     def check_run_status(self):
         #
         self.组队模式 = self.组队模式 and not os.path.exists(self.无法进行组队FILE)
@@ -3647,6 +3670,7 @@ KPL观赛入口: !!python/tuple
             self.标准模式 = False
             self.青铜段位 = self.Tool.var_dict["运行参数.青铜段位"]
             self.选择英雄 = True
+            self.自动选择英雄 = False
             self.触摸对战 = os.path.exists(self.触摸对战FILE)
             self.对战结束返回房间 = True
             # 读入自定义对战参数
@@ -3663,6 +3687,9 @@ KPL观赛入口: !!python/tuple
                 TimeECHO(f"如果希望实现: 自动选择熟练度低的英雄、开启礼包功能、进行青铜对战或者王者模拟战等对战模式")
                 TimeECHO(f"请查看手册教程")
                 TimeECHO(f"<<<"*20)
+            #
+            if self.自动选择英雄:  # and max(self.移动端.resolution) == 960:
+                self.设置英雄字典()
             # ------------------------------------------------------------------------------
             # 下面就是正常的循环流程了
             self.当前状态 = "状态检查"
