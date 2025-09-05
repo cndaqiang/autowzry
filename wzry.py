@@ -141,7 +141,9 @@ class wzry_figure:
 
         # 回忆礼册
         self.大厅回忆礼册 = Template(r"tpl1744184457731.png", record_pos=(0.467, 0.066), resolution=(960, 540))
+        # 新赛季更新后删除 self.礼册赢得对局
         self.礼册赢得对局 = Template(r"tpl1744184473551.png", record_pos=(0.325, 0.201), resolution=(960, 540))
+        self.礼册刷新奖励 = Template(r"tpl1756865636111.png", record_pos=(0.041, 0.218), resolution=(960, 540))
         self.礼册领取礼包 = Template(r"tpl1744184478234.png", record_pos=(-0.211, 0.218), resolution=(960, 540))
         self.礼册返回图标 = Template(r"tpl1744184504445.png", record_pos=(-0.459, -0.252), resolution=(960, 540))
         #
@@ -1706,13 +1708,15 @@ class wzry_task:
             addtime = 60*10 if self.本循环参数.标准模式 else 0
             addtime = 60*20 if self.对战模式 in ["5v5排位"] else addtime
             addtime = -60*5 if self.对战模式 in ["人机闯关", "火焰山", "梦境大乱斗", "1v1人人"] else addtime
-            if self.Tool.timelimit(timekey="结束人机匹配", limit=60*20 + addtime, init=False):
+            if self.Tool.timelimit(timekey="结束人机匹配", limit=60*25 + addtime, init=False):
                 content = "结束人机匹配时间超时"
                 return self.创建同步文件(content)
             #
             点击此处继续 = Template(r"tpl1727232003870.png", record_pos=(-0.002, 0.203), resolution=(960, 540))
-            if self.Tool.timelimit(timekey="结束人机匹配", limit=60*20 + addtime, init=False, reset=False):
-                self.Tool.touch_record_pos(点击此处继续.record_pos, resolution=self.移动端.resolution, keystr=f"{fun_name(1)}.十分钟一次的点击")
+            战令继续 = Template(r"tpl1756862825677.png", record_pos=(-0.128, 0.189), resolution=(960, 540))
+            if self.Tool.timelimit(timekey="结束人机匹配", limit=60*10, init=False, reset=False):
+                self.Tool.touch_record_pos(点击此处继续.record_pos, resolution=self.移动端.resolution, keystr=f"{fun_name(1)}.十分钟一次的点击此处继续")
+                self.Tool.touch_record_pos(战令继续.record_pos, resolution=self.移动端.resolution, keystr=f"{fun_name(1)}.十分钟一次的点击战令继续")
                 TimeECHO(f"⚠️ 警告: 若脚本长期卡在点击此处继续, 请检查是否应该更新资源")
             # 对战阶段，处理对战
             if self.判断对战中(处理=self.触摸对战):
@@ -2202,6 +2206,66 @@ class wzry_task:
                 # 不再识别, 依次点击三个可能的情况
                 posarray = [-0.211, 0.105, 0.427]
                 record_pos = (posarray[i % len(posarray)], 0.215)
+                self.Tool.touch_record_pos(record_pos=record_pos, resolution=self.移动端.resolution, keystr="礼册领取礼包", savepos=True)
+            else:
+                self.Tool.existsTHENtouch(self.图片.礼册领取礼包, "礼册领取礼包", savepos=True)
+        # 避免没完成任务, 点到对战界面, 此处返回
+        self.Tool.existsTHENtouch(self.图片.礼册返回图标, "礼册返回图标", savepos=True)
+        self.Tool.LoopTouch(self.图片.礼册返回图标, "礼册返回图标", savepos=False)
+        #
+        # 如果最后在大厅就结束,不再就再点一次返回. 最后返回界面是在大厅、礼册、个人资料, 是不确定
+        if self.判断大厅中(acce=False):
+            return
+        else:
+            self.Tool.existsTHENtouch(self.图片.礼册返回图标, "礼册返回图标", savepos=True)
+            return
+
+    def 回忆礼册S41(self, times=0):
+        #
+        if not self.check_run_status():
+            return True
+        #
+        if times > 0 or not self.判断大厅中(acce=False, 检测更新=True):
+            self.进入大厅()
+        #
+        if not self.check_run_status():
+            return True
+        #
+        if self.set_timelimit(istep=times, init=times == 0, timelimit=60*10, nstep=10):
+            return True
+        #
+        times = times+1
+        #
+        # 针对 960x540的分辨率, 直接点击记录的坐标
+        if max(self.移动端.resolution) == 960:
+            self.Tool.touch_record_pos(record_pos=self.图片.大厅回忆礼册.record_pos, resolution=self.移动端.resolution, keystr="大厅回忆礼册")
+        else:
+            if times > 4:  # 1,2,3
+                for delstr in list(set(self.Tool.var_dict.keys()) & set(["大厅回忆礼册"])):
+                    del self.Tool.var_dict[delstr]
+            if not self.Tool.existsTHENtouch(self.图片.大厅回忆礼册, "大厅回忆礼册", savepos=True):
+                return self.回忆礼册S39(times)
+        #
+        sleep(10)
+        #
+        if not exists(self.图片.礼册刷新奖励):
+            TimeECHO(f"礼册: 找不到<礼册刷新奖励>图标, 或许进入错误界面或者礼册更新了")
+            if times < 3:
+                return self.回忆礼册S41(times)
+            else:
+                # 3次以后,强制领取
+                self.Tool.existsTHENtouch(self.图片.礼册领取礼包, "礼册领取礼包", savepos=False)
+        #
+        # 领取之后,需要频繁点击屏幕,确定
+        for i in range(20):
+            # 正常识别
+            self.Tool.existsTHENtouch(self.图片.礼册领取礼包, "礼册领取礼包")
+            # 没有强制点击，是因为强制点击的最后一个位置可能还没有完成.
+            # 强制点击
+            if max(self.移动端.resolution) == 960:
+                # 不再识别, 依次点击三个可能的情况(S41改为竖版本)
+                posarray = [-0.122, -0.007, 0.108]
+                record_pos = (0.421, posarray[i % len(posarray)])
                 self.Tool.touch_record_pos(record_pos=record_pos, resolution=self.移动端.resolution, keystr="礼册领取礼包", savepos=True)
             else:
                 self.Tool.existsTHENtouch(self.图片.礼册领取礼包, "礼册领取礼包", savepos=True)
