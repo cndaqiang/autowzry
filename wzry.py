@@ -1975,9 +1975,6 @@ class wzry_task:
             if self.外置礼包_WZYD:
                 self.每日礼包_WZYD()
             #
-            if self.外置礼包_体验币WEB:
-                self.每日礼包_体验币WEB()
-            #
             if self.外置礼包_体验服:
                 self.体验服更新()
         #
@@ -2059,7 +2056,8 @@ class wzry_task:
             else:
                 TimeECHO("暂时不进行玉镖夺魁")
             if self.礼包功能_回忆礼册:
-                self.回忆礼册S39()
+                TimeECHO("礼册不必领取,次日会自动发送到邮箱, 停止该功能的开发")
+                #self.回忆礼册S41()
             # ........................................................
             if not self.王者礼包异常处理():
                 return True
@@ -2156,69 +2154,6 @@ class wzry_task:
         # todo 与灵宝互动区分开,灵宝礼包包含多个礼包入口
         pass
 
-    def 礼册礼包(self, times=0):
-        # todo 礼包功能改版
-        pass
-
-    def 回忆礼册S39(self, times=0):
-        #
-        if not self.check_run_status():
-            return True
-        #
-        if times > 0 or not self.判断大厅中(acce=False, 检测更新=True):
-            self.进入大厅()
-        #
-        if not self.check_run_status():
-            return True
-        #
-        if self.set_timelimit(istep=times, init=times == 0, timelimit=60*10, nstep=10):
-            return True
-        #
-        times = times+1
-        #
-        # 针对 960x540的分辨率, 直接点击记录的坐标
-        if max(self.移动端.resolution) == 960:
-            self.Tool.touch_record_pos(record_pos=self.图片.大厅回忆礼册.record_pos, resolution=self.移动端.resolution, keystr="大厅回忆礼册")
-        else:
-            if times > 4:  # 1,2,3
-                for delstr in list(set(self.Tool.var_dict.keys()) & set(["大厅回忆礼册"])):
-                    del self.Tool.var_dict[delstr]
-            if not self.Tool.existsTHENtouch(self.图片.大厅回忆礼册, "大厅回忆礼册", savepos=True):
-                return self.回忆礼册S39(times)
-        #
-        sleep(10)
-        #
-        if not exists(self.图片.礼册赢得对局):
-            TimeECHO(f"礼册: 找不到<赢得1张对战>图标, 或许进入错误界面或者礼册更新了")
-            if times < 3:
-                return self.回忆礼册S39(times)
-            else:
-                # 3次以后,强制领取
-                self.Tool.existsTHENtouch(self.图片.礼册领取礼包, "礼册领取礼包", savepos=False)
-        #
-        # 领取之后,需要频繁点击屏幕,确定
-        for i in range(20):
-            # 正常识别
-            self.Tool.existsTHENtouch(self.图片.礼册领取礼包, "礼册领取礼包")
-            # 没有强制点击，是因为强制点击的最后一个位置可能还没有完成.
-            # 强制点击
-            if max(self.移动端.resolution) == 960:
-                # 不再识别, 依次点击三个可能的情况
-                posarray = [-0.211, 0.105, 0.427]
-                record_pos = (posarray[i % len(posarray)], 0.215)
-                self.Tool.touch_record_pos(record_pos=record_pos, resolution=self.移动端.resolution, keystr="礼册领取礼包", savepos=True)
-            else:
-                self.Tool.existsTHENtouch(self.图片.礼册领取礼包, "礼册领取礼包", savepos=True)
-        # 避免没完成任务, 点到对战界面, 此处返回
-        self.Tool.existsTHENtouch(self.图片.礼册返回图标, "礼册返回图标", savepos=True)
-        self.Tool.LoopTouch(self.图片.礼册返回图标, "礼册返回图标", savepos=False)
-        #
-        # 如果最后在大厅就结束,不再就再点一次返回. 最后返回界面是在大厅、礼册、个人资料, 是不确定
-        if self.判断大厅中(acce=False):
-            return
-        else:
-            self.Tool.existsTHENtouch(self.图片.礼册返回图标, "礼册返回图标", savepos=True)
-            return
 
     def 回忆礼册S41(self, times=0):
         #
@@ -2244,7 +2179,7 @@ class wzry_task:
                 for delstr in list(set(self.Tool.var_dict.keys()) & set(["大厅回忆礼册"])):
                     del self.Tool.var_dict[delstr]
             if not self.Tool.existsTHENtouch(self.图片.大厅回忆礼册, "大厅回忆礼册", savepos=True):
-                return self.回忆礼册S39(times)
+                return self.回忆礼册S41(times)
         #
         sleep(10)
         #
@@ -2692,119 +2627,9 @@ KPL观赛入口: !!python/tuple
 
         #
     def 每日礼包_每日任务(self, times=0):
-        TimeECHO(f"自S39赛季更新以来, 该[{fun_name()}]功能暂时无法使用, 请等待更新")
         TimeECHO(f"每日任务转移到了礼册系统")
         TimeECHO(f"战令里面只有经验了,没什么需要领的东西了")
-        return
-        #
-        if not self.check_run_status():
-            return True
-        #
-        if times > 0 or not self.判断大厅中(acce=False, 检测更新=True):
-            self.进入大厅()
-        #
-        if not self.check_run_status():
-            return True
-        #
-        if self.set_timelimit(istep=times, init=times == 0, timelimit=60*10, nstep=10):
-            return True
-        #
-        times = times+1
-        #
-        if times > 3:  # 1,2,3
-            for delstr in list(set(self.Tool.var_dict.keys()) & set(["战令入口"])):
-                del self.Tool.var_dict[delstr]
-        # 每日任务
-        战令奖励界面 = []
-        战令奖励界面.append(Template(r"tpl1706543181534.png", record_pos=(0.373, 0.173), resolution=(960, 540)))
-        战令奖励界面.append(Template(r"tpl1729838722235.png", record_pos=(0.449, 0.198), resolution=(960, 540)))
-        确定按钮 = Template(r"tpl1694441190629.png", record_pos=(0.0, 0.165), resolution=(960, 540))
-        # 精细位置
-        任务 = Template(r"tpl1703755622899.png", record_pos=(-0.444, -0.111), resolution=(960, 540))
-        # 正常每日礼包
-        # 这里的record_pos是我精细截取的位置, 即使识别失败, 也可以直接touch
-        一键领取 = Template(r"tpl1693193500142.png", record_pos=(0.391, 0.224), resolution=(960, 540))
-        今日活跃 = Template(r"tpl1703758748236.png", record_pos=(-0.248, 0.222), resolution=(960, 540))
-        本周活跃1 = Template(r"tpl1703758755430.png", record_pos=(-0.084, 0.229), resolution=(960, 540))
-        本周活跃2 = Template(r"tpl1703758760425.png", record_pos=(-0.017, 0.228), resolution=(960, 540))
-        战令任务界面 = [一键领取, 今日活跃, 本周活跃1, 本周活跃2]
-        #
-        返回 = Template(r"tpl1694442171115.png", record_pos=(-0.441, -0.252), resolution=(960, 540))
-        #
-        if not self.Tool.existsTHENtouch(self.图片.战令入口, "战令入口", savepos=True):
-            TimeECHO(f"未找到战令入口.尝试计算坐标")
-            self.Tool.touch_record_pos(self.图片.战令入口.record_pos, self.移动端.resolution, "战令入口")
-        sleep(15)
-        #
-        if self.判断大厅中(acce=False):
-            for delstr in list(set(self.Tool.var_dict.keys()) & set(["战令入口"])):
-                del self.Tool.var_dict[delstr]
-            #
-            TimeECHO("进入战令界面失败，仍在大厅中, 计算点击战令入口")
-            self.Tool.touch_record_pos(self.图片.战令入口.record_pos, self.移动端.resolution, "战令入口")
-            sleep(15)
-            if self.判断大厅中(acce=False):
-                TimeECHO("再次进入战令界面失败，仍在大厅中, 异常无法解决")
-                return self.每日礼包_每日任务(times=times)
-        #
-        # 开始尝试进入任务界面, 后面均采用精确坐标进行touch
-        进入任务界面 = False
-        for i in range(10):
-            self.Tool.touch_record_pos(任务.record_pos, self.移动端.resolution, "战令的每日任务")
-            sleep(10)
-            战令奖励界面 = [一键领取, 今日活跃, 本周活跃1, 本周活跃2]
-            进入任务界面, 战令奖励界面 = self.Tool.存在任一张图(战令任务界面, "战令任务界面界面元素")
-            if 进入任务界面:
-                break
-        #
-        if not 进入任务界面:
-            TimeECHO(f"未检测到战令任务界面, 重新进入领任务礼包")
-            for delstr in list(set(self.Tool.var_dict.keys()) & set(["战令入口"])):
-                del self.Tool.var_dict[delstr]
-            return self.每日礼包_每日任务(times=times-1)
-        #
-        # 开始正式领取, 找不要位置就精细点击坐标
-        # 本日任务礼包
-        活跃礼包 = {"一键领取": 一键领取, "今日活跃": 今日活跃, "本周活跃1": 本周活跃1, "本周活跃2": 本周活跃2}
-        for keystr in 活跃礼包.keys():
-            if not self.Tool.existsTHENtouch(活跃礼包[keystr], keystr):
-                self.Tool.touch_record_pos(record_pos=活跃礼包[keystr].record_pos, resolution=self.移动端.resolution, keystr=keystr)
-            self.王者礼包_点击继续()
-            self.Tool.LoopTouch(确定按钮, "确定按钮")
-            sleep(5)
-        self.Tool.LoopTouch(确定按钮, "确定按钮")
-        #
-        # 若之后出现新的弹窗, 可能需要开启这两个注释, 并插入到后面的间隔中
-        # self.点击关闭按钮()
-        # self.点击确定按钮()
-        #
-        # 新赛季增加的领取入口,全部采用精确坐标, 不再识别
-        本周任务 = Template(r"tpl1703755716888.png", record_pos=(-0.175, -0.192), resolution=(960, 540))
-        本周签到 = Template(r"tpl1703755733895.png", record_pos=(0.244, 0.228), resolution=(960, 540))
-        确定签到 = Template(r"tpl1703755744366.png", record_pos=(-0.001, 0.165), resolution=(960, 540))
-        # 本周任务
-        self.Tool.touch_record_pos(record_pos=本周任务.record_pos, resolution=self.移动端.resolution, keystr="本周任务礼包")
-        sleep(5)
-        if self.Tool.existsTHENtouch(本周签到, "本周战令签到", savepos=False):
-            self.Tool.LoopTouch(确定签到, "确定签到战令")
-        if self.Tool.existsTHENtouch(一键领取, "一键领取 "):
-            self.王者礼包_点击继续()
-            self.Tool.existsTHENtouch(确定按钮, "确定")
-            sleep(5)
-        self.Tool.LoopTouch(确定按钮, "确定按钮")
-        # 本期任务
-        本期任务 = Template(r"tpl1703755722682.png", record_pos=(-0.068, -0.192), resolution=(960, 540))
-        self.Tool.touch_record_pos(record_pos=本期任务.record_pos, resolution=self.移动端.resolution, keystr="本期任务礼包")
-        sleep(5)
-        if self.Tool.existsTHENtouch(一键领取, "一键领取 "):
-            self.Tool.existsTHENtouch(确定按钮, "确定")
-            sleep(5)
-        self.Tool.LoopTouch(确定按钮, "确定按钮")
-        #
-        self.点击关闭按钮()
-        self.点击确定按钮()
-        self.Tool.LoopTouch(返回, "返回")
-        self.点击确定按钮()
+        #       
         return True
 
     def 每日礼包_邮件礼包(self, times=0):
@@ -2920,38 +2745,6 @@ KPL观赛入口: !!python/tuple
             TimeECHO(f"时间太短,暂时不{fun_name(1)}")
             return False
     #
-
-    def 每日礼包_体验币WEB(self):
-        pass
-        if self.Tool.timelimit("网页端体验币礼包", limit=60*60*3, init=False):
-            TimeECHO(f"{fun_name(1)}")
-            self.APPOB.关闭APP()
-            """
-            此函数基于我的另一个WEB签到仓库进行的开发: https://github.com/MobileAutoFlow/autoansign
-            若此函数的功能出现异常, 可以从上述仓库看最新的更新状态
-            需要自己先打开浏览器登陆一遍账号
-            Note: 登陆后会自动下线WZRY的APP, 残废设计, 因此: 此函数于25-07-01停止开发,享年1天.
-            """
-            try:
-                from autoansign import web_tiyanbi
-                # 所有参数通过airtest_mobiel的Setting传递
-                tag_object = web_tiyanbi()  # 假设类构造函数不需要参数
-                # 使用类来创建一个对象实例
-                tag_object.APPOB.big = False
-                tag_object.run()
-                tag_object.stop()
-            except:
-                traceback.print_exc()
-                print("[ 每日礼包_体验币WEB ] 是基于 [autoansign] 进行开发，请安装 autoansign")
-                print("运行以下命令安装：")
-                print("python -m pip install autoansign --upgrade")
-                print("若仍有问题, 请尝试源码安装/运行: https://github.com/MobileAutoFlow/autoansign")
-            #
-            # 修正某些模拟器, 运行完web后强制改变分辨率的问题
-            self.移动端.resolution = (max(self.移动端.resolution), min(self.移动端.resolution))
-        else:
-            TimeECHO(f"时间太短,暂时不{fun_name(1)}")
-            return False
 
     def 体验服更新(self):
         if self.Tool.timelimit("体验服更新", limit=60*60*3, init=False):
