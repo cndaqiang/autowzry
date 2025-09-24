@@ -2056,8 +2056,7 @@ class wzry_task:
             else:
                 TimeECHO("暂时不进行玉镖夺魁")
             if self.礼包功能_回忆礼册:
-                TimeECHO("礼册不必领取,次日会自动发送到邮箱, 停止该功能的开发")
-                #self.回忆礼册S41()
+                self.回忆礼册S41()
             # ........................................................
             if not self.王者礼包异常处理():
                 return True
@@ -2182,6 +2181,10 @@ class wzry_task:
                 return self.回忆礼册S41(times)
         #
         sleep(10)
+        # 点击右下角，自动领取以前的奖励(0.5,0.5*540/960)
+        record_pos = (0.5-0.01,0.5*self.移动端.resolution[1]/self.移动端.resolution[0]-0.01)
+        self.Tool.touch_record_pos(record_pos=record_pos, resolution=self.移动端.resolution, keystr="回忆礼册右下角跳过")
+        sleep(10)
         #
         if not exists(self.图片.礼册刷新奖励):
             TimeECHO(f"礼册: 找不到<礼册刷新奖励>图标, 或许进入错误界面或者礼册更新了")
@@ -2190,6 +2193,9 @@ class wzry_task:
             else:
                 # 3次以后,强制领取
                 self.Tool.existsTHENtouch(self.图片.礼册领取礼包, "礼册领取礼包", savepos=False)
+        #
+        TimeECHO("礼册不领取,下次进入会被动领取, 次月则会发送到邮箱, 因此: 仅进入礼册被动领取昨日奖励即可, 下面的功能没有必要维护")
+        # 以后新赛季再更新, 这里就废弃下面代码, 直接return了
         #
         # 领取之后,需要频繁点击屏幕,确定
         for i in range(20):
