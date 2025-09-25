@@ -1314,6 +1314,8 @@ class wzry_task:
                 return self.开始1v1对局(times)
         #
         if self.选择英雄:
+            if self.自动选择英雄:  # and max(self.移动端.resolution) == 960:
+                self.设置英雄字典()
             sleep(5)
             TimeECHO("1v1设置新的英雄")
             if not self.Tool.existsTHENtouch(self.图片.展开英雄列表, "英雄界面检测", savepos=False):
@@ -1650,6 +1652,9 @@ class wzry_task:
             return True
         # 选择英雄
         if self.选择英雄:
+            if self.自动选择英雄:  # and max(self.移动端.resolution) == 960:
+                self.设置英雄字典()
+            #
             self.Tool.existsTHENtouch(self.参战英雄线路, "参战英雄线路", savepos=True)
             sleep(5)
             # 这里是用savepos的好处就是那个英雄的熟练度低点哪个英雄
@@ -1673,7 +1678,9 @@ class wzry_task:
                 sleepmax = 30
                 self.Tool.timelimit(timekey="不选择英雄", limit=sleepmax, init=True)
                 while True:
-                    TimeECHO(f"{self.对战模式}: 正在检测加载界面....")
+                    # 5s 输出一次, 避免太频繁
+                    if self.Tool.timelimit(timekey="加载游戏界面", limit=5, init=False, reset=False):
+                        TimeECHO(f"{self.对战模式}: 正在检测加载界面....")
                     if self.Tool.timelimit(timekey="不选择英雄", limit=sleepmax, init=False):
                         break
                     if exists(self.图片.加载游戏界面):
@@ -1838,7 +1845,9 @@ class wzry_task:
                 if self.判断对战中(处理=self.触摸对战):
                     initloop = False
                     continue
-            initloop = False
+            # 特殊皮肤, 导致没有识别对战成功, 对于一些特殊的对战, 可能会误判为队出战结束, 这里不能设置initloop = False
+            if self.对战模式 not in ["5v5排位", "人机闯关", "火焰山", "梦境大乱斗", "1v1人人", "3v3匹配"]:
+                initloop = False
             #
             # 万一点到某处, 这是返回按钮
             if self.Tool.existsTHENtouch(Template(r"tpl1689667050980.png", record_pos=(-0.443, -0.251), resolution=(960, 540))):
@@ -3085,11 +3094,18 @@ KPL观赛入口: !!python/tuple
                         TimeErr(f" not found x y in [{self.触摸对战FILE}]")
                 for i in range(random.randint(1, 5)):
                     if not x:
+                        # 默认(右,下)方向
                         x = 0.2+random.random()/5
                         y = -0.2+random.random()/5
+                        # 随机方向
                         if self.对战模式 in ["火焰山"]:
                             x = random.random()/2-0.25
                             y = random.random()/2-0.25
+                        # 中路方向
+                        # 因为地形等原因对角线不回去中路,要上多一些
+                        if self.对战模式 in ["人机闯关"]: # 中路平推
+                            x = 0.2+random.random()/5
+                            y = -0.4-random.random()/5
                     swipe(移动pos, vector=[x, y])
                     #
                     if 普攻pos:
@@ -3097,8 +3113,7 @@ KPL观赛入口: !!python/tuple
                         touch(普攻pos)
                     #
                     # 这里是为了快速脱离水晶，排位卡在水晶就会被警告
-                    # 因为单方向运行下面的内容，可能卡在坑里，但不会被处罚也挺好
-                    if self.对战模式 in ["5v5排位", "人机闯关", "1v1人人", "3v3匹配", "梦境大乱斗"]:
+                    if self.对战模式 in ["5v5排位", "1v1人人", "3v3匹配", "梦境大乱斗"]:
                         for _ in range(5):
                             swipe(移动pos, vector=[x, -y])
                         if 普攻pos:
@@ -3109,7 +3124,6 @@ KPL观赛入口: !!python/tuple
                         swipe(移动pos, vector=[-x*0.5, -y*0.5])
                         if random.random() < 0.05:  # 小概率移动一下, 脱离挂机点
                             swipe(移动pos, vector=[x, y])
-
                     #
                     # 人人模式随机点向上走走, 去吃对面小兵的伤害
                     if random.randint(1, 5) == 1 and self.对战模式 in ["人机闯关", "1v1人人", "3v3匹配", "梦境大乱斗"]:
@@ -3145,7 +3159,10 @@ KPL观赛入口: !!python/tuple
                     self.Tool.touch_record_pos(record_pos=self.图片.对战恢复按钮.record_pos, resolution=self.移动端.resolution, keystr="对战恢复按钮")
                 elif 点击按钮 >= 6:
                     技能图标 = 所有技能图标[点击按钮 % 3]
-                    self.Tool.touch_record_pos(record_pos=技能图标.record_pos, resolution=self.移动端.resolution, keystr="对战技能图标")
+                    self.Tool.touch_record_pos(record_pos=技能图标.record_pos, resolution=self.移动端.resolution, keystr="对战技能图标", savepos=True)
+                    # 有些技能需要滑动释放
+                    技能pos = self.Tool.var_dict["对战技能图标"]
+                    swipe(技能pos, vector=[0.2,-0.2])
             #
             # 火焰山火球
             if self.对战模式 in ["火焰山"]:
@@ -3161,7 +3178,7 @@ KPL观赛入口: !!python/tuple
         if self.对战模式 in ["5v5排位", "人机闯关", "火焰山", "梦境大乱斗", "1v1人人", "3v3匹配"]:
             移动poskey = f"移动pos({self.mynode})"
             普攻poskey = f"普攻pos({self.mynode})"
-            vector = [0.2, -0.2]
+            vector = [0.2, -0.4] # 右上上, 中路方向
             移动次数 = 5
             if self.对战模式 in ["火焰山"]:
                 vector = [random.random()/2.0-0.25, random.random()/2.0-0.25]
@@ -3250,7 +3267,7 @@ KPL观赛入口: !!python/tuple
         分路名称 = ["对抗", "打野", "中路", "发育", "游走"]
         线路坐标 = [(-0.314, -0.26),  (-0.194, -0.26), (-0.069, -0.26), (0.037, -0.26),  (0.18, -0.26)]
         # 对应分路的第(列,行)的英雄, 不同账户、对战模式的英雄数目不一样多, 根据实际情况设置对应分路的最后一个英雄的(列号,行号)
-        位置坐标 = [(6, 5), (9, 5), (4, 4), (2, 3), (4, 4)]
+        位置坐标 = [(7, 5), (9, 5), (3, 4), (2, 3), (4, 4)]
         index = (self.runstep+self.mynode) % len(分路名称)
         TimeECHO(f"本次{self.runstep}对战分路: {分路名称[index]}")
         # 主战英雄
@@ -3566,9 +3583,6 @@ KPL观赛入口: !!python/tuple
                 TimeECHO(f"如果希望实现: 自动选择熟练度低的英雄、开启礼包功能、进行青铜对战或者王者模拟战等对战模式")
                 TimeECHO(f"请查看手册教程")
                 TimeECHO(f"<<<"*20)
-            #
-            if self.自动选择英雄:  # and max(self.移动端.resolution) == 960:
-                self.设置英雄字典()
             # ------------------------------------------------------------------------------
             # 下面就是正常的循环流程了
             self.当前状态 = "状态检查"
@@ -3705,14 +3719,8 @@ KPL观赛入口: !!python/tuple
                 TimeECHO(f"⚠ 若需要自行开发相关功能, 请注释下面的return")
                 return
 
-            if self.对战模式 in ["5v5排位", "人机闯关", "梦境大乱斗", "火焰山", "1v1人人", "3v3匹配"]:
+            if self.对战模式 in ["人机闯关", "火焰山"]:
                 TimeECHO(f"=⚠=" * 20)
-                if not os.path.exists(self.调试文件FILE):
-                    TimeECHO(f"⚠ 警告：当前 [{self.对战模式}] 模式无法正常运行，请勿使用该模式！⚠️")
-                    TimeECHO(f"⚠ 为避免异常行为，请尽快退出该模式！")
-                    TimeECHO(f"=⚠=" * 20)
-                    return
-                #
                 TimeECHO(f"⚠ 警告：检测到用户擅自使用 [{self.对战模式}] 模式！")
                 TimeECHO(f"⚠ 请立即退出脚本，避免影响其他玩家的正常游戏体验！")
                 TimeECHO(f"=⚠=" * 20)
@@ -3738,8 +3746,6 @@ KPL观赛入口: !!python/tuple
                     TimeECHO(f"警告: 不建议星耀难度开启TOUCH模式")
                 if not self.青铜段位 and self.Tool.var_dict["运行参数.青铜段位"]:
                     TimeECHO(f"警告: 检测到对战达到星耀对战上限, 但仍将依据 self.青铜段位 = {self.青铜段位} 尝试进行星耀对战")
-            if self.对战模式 not in ["人机闯关", "5v5匹配", "火焰山"]:
-                TimeECHO(f"自S39赛季更新, [{self.对战模式}]模式停止维护, 请自行检查可用情况")
             if self.组队模式:
                 TimeECHO(f"自S39赛季更新,组队停止维护, 请自行检查可用情况")
             # ------------------------------------------------------------------------------

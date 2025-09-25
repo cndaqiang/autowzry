@@ -26,7 +26,7 @@ except:
 
 setup(
     name='autowzry',
-    version='2.4.1.1',
+    version='2.4.1.2',
     # 版本号后缀说明：
     # - a1：早期测试版（Alpha 版本）
     # - b1：功能较完整但可能有问题的测试版（Beta 版本）
