@@ -3772,6 +3772,16 @@ def main():
         if not os.path.exists(config_file):
             TimeECHO(f"不存在{config_file},请检查文件是否存在、文件名是否正确以及yaml.txt等错误拓展名")
             exit()
+    else:
+        TimeECHO("未指定config文件")
+        TimeECHO("生成配置文件: config.example.yaml")
+        TimeECHO("请重命名为: config.win.yaml")
+        TimeECHO("按照实际情况修改: config.win.yaml")
+        TimeECHO(f"运行: {sys.argv[0]} config.win.yaml")
+        var_dict={}
+        var_dict["mynode"] = 0
+        var_dict["LINK_dict"]={0: "Android:///127.0.0.1:5555"}
+        save_yaml(var_dict, "config.example.yaml")
     # task_manager = TaskManager(config_file, None, None)
     task_manager = TaskManager(config_file, wzry_task, 'RUN')
     try:
