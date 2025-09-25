@@ -14,15 +14,20 @@
 
 [本项目](https://github.com/cndaqiang/autowzry)基于[airtest-mobileauto](https://github.com/cndaqiang/airtest_mobileauto)开发，旨在演示自动化技术。通过图像识别和模拟点击，展示模拟器自动化操作，包括启动模拟器、更新游戏、错误修复、自动对战及礼包领取。本项目重点演示自动化技术在处理重复性任务上的潜力，以及实现7*24h无人值守自动化的方法。目的是为开发者提供技术参考，启发大家探索如何从繁琐的日常操作中解放时间，从而更好地享受生活。技术细节详见 [流程详解](https://cndaqiang.github.io/wzry.doc/guide/install/) 和 [备用详解](https://autowzry.pages.dev/)。
 
-## 快速开始
 
-```
-python -m pip install autowzry
+## Quick Start
+
+```bash
+# Download the last release package from pypi
+# https://pypi.org/project/autowzry/
+python -m pip install autowzry --upgrade
+
+# Run and generate config file
 autowzry
-modfig config.example.yaml and rename to config.android.yaml
-autowzry config.win.yaml
-```
 
+# If the above command failed, try modifying the config file and run again
+autowzry config.example.yaml
+```
 
 ## 免责声明
 
