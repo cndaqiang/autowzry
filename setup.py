@@ -26,7 +26,7 @@ except:
 
 setup(
     name='autowzry',
-    version='2.3.1.a6',
+    version='2.4.1.1',
     # 版本号后缀说明：
     # - a1：早期测试版（Alpha 版本）
     # - b1：功能较完整但可能有问题的测试版（Beta 版本）
@@ -49,7 +49,7 @@ setup(
     include_package_data=True,  # 自动包含 package_data 中指定的文件
     url='https://github.com/cndaqiang/autowzry',
     install_requires=[
-        'airtest-mobileauto>=2.1.3',
+        'airtest-mobileauto>=2.1.8.1',
         # 'autoansign>=1.2',
     ],
     entry_points={

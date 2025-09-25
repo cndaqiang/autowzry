@@ -125,13 +125,14 @@ class wzry_figure:
         self.大厅对战图标 = Template(r"tpl1723219359665.png", record_pos=(-0.122, 0.133), resolution=(960, 540))
         self.大厅娱乐模式 = Template(r"tpl1723219381063.png", record_pos=(0.243, 0.14), resolution=(960, 540))
         self.王者模拟战图标 = Template(r"tpl1693660105012.png", record_pos=(-0.255, -0.004), resolution=(960, 540))
-        self.火焰山图标 = Template(r"tpl1739510136533.png", record_pos=(0.048, -0.144), resolution=(960, 540))
+        self.火焰山图标 = Template(r"tpl1739510136533.png", record_pos=(-0.351, 0.208), resolution=(960, 540))
+        self.火焰山开始匹配 = Template(r"tpl1758766044098.png", record_pos=(0.276, 0.182), resolution=(960, 540))
         self.梦境大乱斗图标 = Template(r"tpl1744266266709.png", record_pos=(-0.258, -0.144), resolution=(960, 540))
         self.大厅排位赛 = Template(r"tpl1739510088247.png", record_pos=(0.127, 0.127), resolution=(960, 540))
         self.进入排位赛 = Template(r"tpl1739510101543.png", record_pos=(0.29, 0.181), resolution=(960, 540))
         self.进入3v3匹配 = Template(r"tpl1740191017832.png", record_pos=(0.368, 0.051), resolution=(960, 540))
         self.进入5v5匹配 = Template(r"tpl1689666019941.png", record_pos=(0.331, 0.049), resolution=(960, 540))
-        self.进入人机匹配 = Template(r"tpl1689666034409.png", record_pos=(0.056, 0.087), resolution=(960, 540))
+        self.进入人机匹配 = Template(r"tpl1689666034409.png", record_pos=(0.06, 0.186), resolution=(960, 540))
         self.进入1v1模式 = Template(r"tpl1739612926204.png", record_pos=(0.374, -0.152), resolution=(960, 540))
         self.进入1v1匹配 = Template(r"tpl1739612949187.png", record_pos=(-0.196, 0.053), resolution=(960, 540))
         self.进入1v1墨家 = Template(r"tpl1739612955707.png", record_pos=(-0.146, -0.076), resolution=(960, 540))
@@ -156,6 +157,7 @@ class wzry_figure:
         # 这种活动图标总在变，直接写死成绝对坐标来避免识别
         #
         # 人机选择图标
+        self.人机模式界面 = Template(r"tpl1758765666177.png", record_pos=(0.311, -0.072), resolution=(960, 540))
         self.人机标准模式 = Template(r"tpl1702268393125.png", record_pos=(-0.35, -0.148), resolution=(960, 540))
         self.人机快速模式 = Template(r"tpl1689666057241.png", record_pos=(-0.308, -0.024), resolution=(960, 540))
         self.人机青铜段位 = Template(r"tpl1689666083204.png", record_pos=(0.014, -0.148), resolution=(960, 540))
@@ -1077,9 +1079,22 @@ class wzry_task:
             self.Tool.existsTHENtouch(匹配图标, 匹配tag, savepos=True)
             sleep(5)  # 点击之后要等待,有的模拟器速度太慢
         #
+        # 3v3 直接进入房间了
+        if self.对战模式 in ["3v3匹配"]:
+            if self.判断房间中(处理=True):
+                return True
+            else:
+                return self.单人进入人机匹配房间(times)
+        # S41note: 下面是5v5人机 与 人机闯关
         if not self.Tool.existsTHENtouch(self.图片.进入人机匹配, "进入人机匹配", savepos=False):
+            TimeECHO("未识别到人机入口, .... 强行点击人机坐标")
+            self.Tool.touch_record_pos(record_pos=self.图片.进入人机匹配.record_pos, resolution=self.移动端.resolution, keystr="S41人机入口")
+        sleep(10)
+        if not exists(self.图片.人机模式界面):
+            TimeErr("找不到人机模式界面")
+            #
             if times > 2:
-                TimeECHO("没有检测到[进入人机匹配]界面, 请注意WZ是否又更新了进入人机的界面")
+                TimeErr("删除字典,重新进入")
                 for delstr in list(set(self.Tool.var_dict.keys()) & set(["大厅对战", 匹配tag])):
                     del self.Tool.var_dict[delstr]
             #
@@ -1093,12 +1108,7 @@ class wzry_task:
         if "人机闯关" in self.对战模式:
             TimeECHO(f"单人进入人机闯关房间{times}")
             return self.单人进入人机闯关房间(times)
-        # 3v3 直接进入房间了
-        if self.对战模式 in ["3v3匹配"]:
-            if self.判断房间中(处理=True):
-                return True
-            else:
-                return self.单人进入人机匹配房间(times)
+
         #
         模式key = "标准模式" if self.标准模式 else "快速模式"
         段位key = "青铜段位" if self.青铜段位 else "星耀段位"
@@ -1510,6 +1520,11 @@ class wzry_task:
         if not self.Tool.existsTHENtouch(self.图片.火焰山图标, "火焰山图标", savepos=True):
             self.Tool.touch_record_pos(record_pos=self.图片.火焰山图标.record_pos, resolution=self.移动端.resolution, keystr=f"强制点击火焰山图标图标")
         sleep(5)
+        # S41note: 界面改版
+        if not self.Tool.existsTHENtouch(self.图片.火焰山开始匹配, "火焰山开始匹配", savepos=False):
+            TimeECHO("未识别到火焰山开始匹配, .... 强行点击")
+            self.Tool.touch_record_pos(record_pos=self.图片.火焰山开始匹配.record_pos, resolution=self.移动端.resolution, keystr="火焰山开始匹配")
+        sleep(10)
         if self.判断房间中(处理=True):
             return True
         else:
@@ -1672,7 +1687,9 @@ class wzry_task:
             self.无脑移动保护信誉分()
             加载中 = exists(self.图片.加载游戏界面)
             if 加载中:
-                TimeECHO("加载游戏中.....")
+                # 5s 输出一次, 避免太频繁
+                if self.Tool.timelimit(timekey="加载游戏界面", limit=5, init=False, reset=False):
+                    TimeECHO("加载游戏中.....")
                 if not 点击加油按钮:
                     if not self.Tool.existsTHENtouch(self.图片.加载加油按钮, "加油按钮", savepos=False):
                         self.Tool.touch_record_pos(self.图片.加载加油按钮.record_pos, self.移动端.resolution, "加油按钮")
@@ -2153,7 +2170,6 @@ class wzry_task:
         # todo 与灵宝互动区分开,灵宝礼包包含多个礼包入口
         pass
 
-
     def 回忆礼册S41(self, times=0):
         #
         if not self.check_run_status():
@@ -2182,7 +2198,7 @@ class wzry_task:
         #
         sleep(10)
         # 点击右下角，自动领取以前的奖励(0.5,0.5*540/960)
-        record_pos = (0.5-0.01,0.5*self.移动端.resolution[1]/self.移动端.resolution[0]-0.01)
+        record_pos = (0.5-0.01, 0.5*self.移动端.resolution[1]/self.移动端.resolution[0]-0.01)
         self.Tool.touch_record_pos(record_pos=record_pos, resolution=self.移动端.resolution, keystr="回忆礼册右下角跳过")
         sleep(10)
         #
@@ -2635,7 +2651,7 @@ KPL观赛入口: !!python/tuple
     def 每日礼包_每日任务(self, times=0):
         TimeECHO(f"每日任务转移到了礼册系统")
         TimeECHO(f"战令里面只有经验了,没什么需要领的东西了")
-        #       
+        #
         return True
 
     def 每日礼包_邮件礼包(self, times=0):
@@ -3684,6 +3700,11 @@ KPL观赛入口: !!python/tuple
                 continue
             # ------------------------------------------------------------------------------
             # 计算参数检查警告
+            if self.对战模式 not in ["人机闯关", "火焰山", "5v5匹配"]:
+                TimeECHO(f"⚠ 自S41赛季, 当前模式[{self.对战模式}]已不被支持，正在退出程序")
+                TimeECHO(f"⚠ 若需要自行开发相关功能, 请注释下面的return")
+                return
+
             if self.对战模式 in ["5v5排位", "人机闯关", "梦境大乱斗", "火焰山", "1v1人人", "3v3匹配"]:
                 TimeECHO(f"=⚠=" * 20)
                 if not os.path.exists(self.调试文件FILE):
@@ -3778,9 +3799,9 @@ def main():
         TimeECHO("请重命名为: config.win.yaml")
         TimeECHO("按照实际情况修改: config.win.yaml")
         TimeECHO(f"运行: {sys.argv[0]} config.win.yaml")
-        var_dict={}
+        var_dict = {}
         var_dict["mynode"] = 0
-        var_dict["LINK_dict"]={0: "Android:///127.0.0.1:5555"}
+        var_dict["LINK_dict"] = {0: "Android:///127.0.0.1:5555"}
         save_yaml(var_dict, "config.example.yaml")
     # task_manager = TaskManager(config_file, None, None)
     task_manager = TaskManager(config_file, wzry_task, 'RUN')
