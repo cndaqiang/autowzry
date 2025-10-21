@@ -26,9 +26,30 @@
 import sys
 import os
 import traceback
+from time import sleep
 
 try:
-    from airtest_mobileauto import *
+    # from airtest_mobileauto import *
+    # 建议将 from airtest_mobileauto import * 替换为以下具体导入:
+    from airtest_mobileauto.control import (
+        Settings,
+        DQWheel,
+        deviceOB,
+        appOB,
+        TimeECHO,
+        TimeErr,
+        fun_name,
+        funs_name,
+        run_class_command,
+        touch,
+        exists,
+        swipe,
+        Template,
+        save_yaml,
+        TaskManager,
+        connect_status,
+        check_requirements
+    )
 except ImportError:
     traceback.print_exc()
     print("模块 [airtest_mobileauto] 导入不存在，请安装 airtest_mobileauto")
@@ -72,6 +93,8 @@ class wzyd_libao:
             except:
                 traceback.print_exc()
         #
+        if max(self.移动端.resolution) != 960:
+            TimeECHO(f"\n\n⚠️ 警告: 当前分辨率为 {self.移动端.resolution} , 部分图片识别可能不准确, 推荐使用 540x960 分辨率\n\n")
         self.组队模式 = self.totalnode > 1
         self.房主 = self.mynode == 0 or self.totalnode == 1
         # prefix, 还用于创建读取一些特定的控制文件/代码
@@ -95,20 +118,21 @@ class wzyd_libao:
         self.体验币成功 = False
         self.营地活动 = True
         #
-        # 这两个图标会根据活动变化,可以用下面的注入替换
-        self.个人界面图标 = Template(r"tpl1699872206513.png", record_pos=(0.376, 0.724), resolution=(540, 960))
-        self.游戏界面图标 = Template(r"tpl1704381547456.png", record_pos=(0.187, 0.726), resolution=(540, 960))
-        self.社区界面图标 = Template(r"tpl1717046076553.png", record_pos=(-0.007, 0.759), resolution=(540, 960))
         self.每日福利图标 = Template(r"tpl1699872219891.png", record_pos=(-0.198, -0.026), resolution=(540, 960))
         self.一键领取按钮 = Template(r"tpl1706338731419.png", record_pos=(0.328, -0.365), resolution=(540, 960))
-        self.赛事入口 = Template(r"tpl1717046009399.png", record_pos=(-0.269, -0.804), resolution=(540, 960), threshold=0.9, target_pos=6)
-        self.资讯入口 = Template(r"tpl1717046009399.png", record_pos=(-0.269, -0.804), resolution=(540, 960), threshold=0.9)
+        # 这个图片并没有作用. 只是为了给Template传递一个默认的路径, 为一些不好识别的元素, 提供record_pos参数
+        self.圈子入口 = Template(r"tpl1717046076553.png", record_pos=(-0.098, -0.798), resolution=(540, 960))
+        self.放映入口 = Template(r"tpl1759999486444.png", record_pos=(-0.004, 0.828), resolution=(540, 960), threshold=0.9, target_pos=6)
+        self.推荐入口 = Template(r"tpl1717046009399.png", record_pos=(-0.244, -0.789), resolution=(540, 960), threshold=0.9)
+        self.游戏入口 = Template(r"tpl1704381547456.png", record_pos=(0.187, 0.726), resolution=(540, 960))
+        self.个人入口 = Template(r"tpl1699872206513.png", record_pos=(0.364, 0.807), resolution=(540, 960))
         if self.IOS:
             self.每日福利图标 = Template(r"tpl1700272452555.png", record_pos=(-0.198, -0.002), resolution=(640, 1136))
         self.营地大厅元素 = []
         # 不用添加底部所有的图标, 活动时肯定全部改变, 多添加一些特色的图标
-        self.营地大厅元素.append(self.社区界面图标)
-        self.营地大厅元素.append(self.赛事入口)
+        self.营地大厅元素.append(self.推荐入口)
+        # 圈子页面判断状态图标
+        self.圈子界面 = Template(r"tpl1717047527808.png", record_pos=(-0.254, -0.809), resolution=(540, 960))
 
         #
         self.营地登录元素 = []
@@ -140,7 +164,7 @@ class wzyd_libao:
                 TimeECHO("conda activate air37")
                 TimeECHO("python -m pip install pocoui")
                 TimeECHO("python -m pip install airtest_mobileauto")
-                TimeECHO("python .\wzyd.py .\config.win.yaml")
+                TimeECHO("python wzyd.py config.win.yaml")
 
         #
         self.初始化成功 = False
@@ -155,7 +179,8 @@ class wzyd_libao:
         return self.RUN()
     #
     # poco 相关
-    def poco_exit_text(self,strlist):
+
+    def poco_exit_text(self, strlist):
         # 如果是字符串，转换为单元素列表
         if isinstance(strlist, str):
             strlist = [strlist]
@@ -165,7 +190,7 @@ class wzyd_libao:
                 return True
         return False
 
-    def poco_exit_id(self,strlist):
+    def poco_exit_id(self, strlist):
         # 如果是字符串，转换为单元素列表
         if isinstance(strlist, str):
             strlist = [strlist]
@@ -173,9 +198,9 @@ class wzyd_libao:
             if self.poco(istr).exists():
                 TimeECHO(f"poco: 找到id == {istr}")
                 return True
-        return False        
-    
-    def poco_exit_text_then_touch(self,strlist):
+        return False
+
+    def poco_exit_text_then_touch(self, strlist):
         # 如果是字符串，转换为单元素列表
         if isinstance(strlist, str):
             strlist = [strlist]
@@ -186,8 +211,8 @@ class wzyd_libao:
                 sleep(0.1)
                 return True
         return False
-    
-    def poco_exit_id_then_touch(self,strlist):
+
+    def poco_exit_id_then_touch(self, strlist):
         # 如果是字符串，转换为单元素列表
         if isinstance(strlist, str):
             strlist = [strlist]
@@ -198,23 +223,32 @@ class wzyd_libao:
                 sleep(0.1)
                 return True
         return False
-    
-    def 判断营地大厅中(self):
+
+    def 判断账号在线(self):
         #
         if self.pocosupport:
             return self.poco_exit_text(["首页"])
         #
         # 不用添加底部所有的图标, 活动时肯定全部改变
-        self.营地大厅元素.append(self.社区界面图标)
-        self.营地大厅元素.append(self.赛事入口)
+        self.营地大厅元素.append(self.推荐入口)
         存在, self.营地大厅元素 = self.Tool.存在任一张图(self.营地大厅元素, "营地大厅元素")
+        #
+        if not 存在:
+            # 点进圈子, 看是否检测到
+            self.Tool.touch_record_pos(record_pos=self.圈子入口.record_pos, resolution=self.移动端.resolution, keystr="圈子入口")
+            sleep(10)
+            if exists(self.圈子界面):
+                return True
+            # 其他规则去判断
+            #
+            TimeECHO(f"判断账号在线失败,有可能营地有更新或分辨率不对")
         return 存在
     #
 
     def 判断营地登录中(self):
         #
         if self.pocosupport:
-            return self.poco_exit_text(["com.tencent.gamehelper.smoba:id/sv_license","com.tencent.gamehelper.smoba:id/tv_reject","com.tencent.gamehelper.smoba:id/tv_agree","获取验证码"])
+            return self.poco_exit_text(["com.tencent.gamehelper.smoba:id/sv_license", "com.tencent.gamehelper.smoba:id/tv_reject", "com.tencent.gamehelper.smoba:id/tv_agree", "获取验证码"])
         #
         存在, self.营地登录元素 = self.Tool.存在任一张图(self.营地登录元素, "营地登录元素")
         return 存在
@@ -228,8 +262,10 @@ class wzyd_libao:
             TimeECHO(f":不存在APP{self.APPOB.APPID}")
             return False
         #
+        TimeECHO(":营地初始化")
+        #
         self.礼包功能_营地币换碎片 = True
-        self.礼包功能_体验币换碎片 = False
+        self.礼包功能_体验币换碎片 = True
         run_class_command(self=self, command=self.Tool.readfile(self.营地初始化FILE))
         #
         # 判断网络情况
@@ -250,8 +286,8 @@ class wzyd_libao:
         #
         # 这里很容易出问题，主页的图标变来变去
         # MuMu 模拟器营地居然也闪退
-        if not self.判断营地大厅中():
-            TimeECHO(":营地未知原因没能进入大厅,再次尝试")
+        if not self.判断账号在线():
+            TimeECHO(":无法确定营地是否在线,再次尝试")
             self.APPOB.关闭APP()
             if not self.APPOB.前台APP(2):
                 TimeECHO(":营地无法打开,返回")
@@ -262,7 +298,7 @@ class wzyd_libao:
             #
             # 说明可以启动, 此时没有登录元素就算是成功了吧
             if self.判断营地登录中():
-                TimeECHO(":检测到营地登录界面,不领取礼包")
+                TimeECHO(":检测到营地登录界面,需要重新登录营地")
                 self.Tool.touchfile(self.营地需要登录FILE)
                 self.APPOB.关闭APP()
                 return False
@@ -284,7 +320,7 @@ class wzyd_libao:
         # 修正分辨率, 避免某些模拟器返回的分辨率不对
         if self.移动端.resolution[0] > self.移动端.resolution[1]:
             TimeECHO("=>"*20)
-            TimeECHO(f"⚠️ 警告: 分辨率 ({ self.移动端.resolution}) 不符合 (宽, 高) 格式，正在修正...")
+            TimeECHO(f"⚠️ 警告: 分辨率 ({self.移动端.resolution}) 不符合 (宽, 高) 格式，正在修正...")
             self.移动端.resolution = (min(self.移动端.resolution), max(self.移动端.resolution))
             TimeECHO("<="*20)
         #
@@ -311,17 +347,17 @@ class wzyd_libao:
             TimeECHO(f"检测到{self.营地需要登录FILE}, 不领取礼包")
             return False
         #
+        # 体验服只有安卓客户端可以领取
+        if not self.IOS and self.礼包功能_体验币换碎片:
+            self.体验服礼物()
+        #
         self.营地任务_浏览资讯()
         self.营地任务_观看赛事()
         self.营地任务_圈子签到()
         #
-        # 体验服只有安卓客户端可以领取
-        if not self.IOS and self.礼包功能_体验币换碎片:
-            self.体验服礼物()
         self.每日签到任务()
         if self.礼包功能_营地币换碎片:
             self.营地币兑换碎片()
-        self.营地战令经验()
         self.APPOB.关闭APP()
         return True
 
@@ -353,7 +389,9 @@ class wzyd_libao:
             return self.营地任务_观看赛事(times)
         #
         # 都保存位置,最后进不去再return
-        self.Tool.existsTHENtouch(self.赛事入口, "赛事入口", savepos=True)
+        if not self.Tool.existsTHENtouch(self.放映入口, "放映入口", savepos=False):
+            self.Tool.touch_record_pos(record_pos=self.放映入口.record_pos, resolution=self.移动端.resolution, keystr="资讯入口.推荐")
+
         去直播间 = Template(r"tpl1717046024359.png", record_pos=(0.033, 0.119), resolution=(540, 960))
         for i in range(5):
             if self.Tool.existsTHENtouch(去直播间, "去直播间图标"):
@@ -393,13 +431,13 @@ class wzyd_libao:
             return self.营地任务_圈子签到(times)
         #
         # 都保存位置,最后进不去再return
-        self.Tool.existsTHENtouch(self.社区界面图标, "社区界面图标", savepos=True)
+        # 圈子入口已改变
+        self.Tool.touch_record_pos(record_pos=self.圈子入口.record_pos, resolution=self.移动端.resolution, keystr="圈子入口")
         sleep(10)
         #
-        圈子图标 = Template(r"tpl1717047527808.png", record_pos=(-0.254, -0.809), resolution=(540, 960))
-        if not self.Tool.existsTHENtouch(圈子图标, "圈子图标", savepos=True):
-            TimeECHO(f"找不到圈子图标")
-            return self.营地任务_圈子签到(times)
+        if not exists(self.圈子界面):
+            TimeECHO(f"找不到圈子界面,先忽略")
+            # return self.营地任务_圈子签到(times)
         #
         # 需要提前自己加入一些圈子
         营地圈子 = []
@@ -418,17 +456,20 @@ class wzyd_libao:
             if 进入小组:
                 break
         #
+        圈子签到图标 = Template(r"tpl1717046286604.png", record_pos=(0.394, -0.531), resolution=(540, 960))
+        # 找不到圈子,则强制点击第一个圈子
         if not 进入小组:
-            TimeECHO(f"请加入以下圈子之一: 王者问答圈|皮肤交流圈|峡谷互助小组")
-            TimeECHO(f"如果仍无法找到圈子，可能是营地版本不同，需要修改: 营地圈子.append()")
-            return self.营地任务_圈子签到(times)
-        圈子签到图标 = Template(r"tpl1717046286604.png", record_pos=(0.393, -0.3), resolution=(540, 960))
-        签到成功图标 = Template(r"tpl1717047898461.png", record_pos=(-0.004, 0.237), resolution=(540, 960))
-        if self.Tool.existsTHENtouch(圈子签到图标, "圈子签到图标"):
-            if self.Tool.existsTHENtouch(签到成功图标, "签到成功图标"):
-                TimeECHO(f"签到成功")
-        else:
-            TimeECHO(f"可能签到过了")
+            小组入口 = (-0.202, -0.506)
+            self.Tool.touch_record_pos(record_pos=小组入口, resolution=self.移动端.resolution, keystr="圈子入口")
+            if not exists(圈子签到图标):
+                存在, 营地圈子 = self.Tool.存在任一张图(营地圈子, "营地.营地圈子", savepos=True)
+                if not 存在:
+                    TimeECHO(f"请加入以下圈子之一: 王者问答圈|皮肤交流圈|峡谷互助小组")
+                    TimeECHO(f"如果仍无法找到圈子，可能是营地版本不同，需要修改: 营地圈子.append()")
+                    return self.营地任务_圈子签到(times)
+        # (强制)签到
+        if not self.Tool.existsTHENtouch(圈子签到图标, "圈子签到图标"):
+            self.Tool.touch_record_pos(record_pos=圈子签到图标.record_pos, resolution=self.移动端.resolution, keystr="圈子入口")
         return True
 
     def 营地任务_浏览资讯(self, times=1):
@@ -465,9 +506,10 @@ class wzyd_libao:
             if not self.poco_exit_text_then_touch(["推荐"]):
                 return self.营地任务_浏览资讯(times)
         else:
-            self.Tool.existsTHENtouch(self.资讯入口, "资讯入口.推荐", savepos=True)
+            if not self.Tool.existsTHENtouch(self.推荐入口, "资讯入口.推荐", savepos=False):
+                self.Tool.touch_record_pos(record_pos=self.推荐入口.record_pos, resolution=self.移动端.resolution, keystr="资讯入口.推荐")
         #
-        # 
+        #
         if self.pocosupport:
             pass
             # 暂时没找到从poco进行咨询页面的功能，强制点击特定位置是可以行的
@@ -475,17 +517,13 @@ class wzyd_libao:
         资讯入口图标 = []
         资讯入口图标.append(Template(r"tpl1724584561119.png", record_pos=(-0.419, -0.433), resolution=(540, 960)))
         资讯入口图标.append(Template(r"tpl1724681918901.png", record_pos=(-0.115, -0.213), resolution=(540, 960)))
-        if "资讯入口图标" not in self.Tool.var_dict.keys():
-            # savepos 如果找到会自动替换上一次的字典
-            存在, 资讯入口图标 = self.Tool.存在任一张图(资讯入口图标, "资讯入口图标", savepos=True)
-            if not 存在:
-                TimeECHO(f"WZYD: 资讯入口图标")
-                TimeECHO(f"按照960x540的分辨率强制设定坐标")
-                # 这里是绝对坐标，不适用于其他分辨率的情况
-                self.Tool.var_dict["资讯入口图标"] = (250, 650)
+        咨询入口位置 = (0.0, -0.34)
+        存在, 资讯入口图标 = self.Tool.存在任一张图(资讯入口图标, "资讯入口图标", savepos=True)
+        if not 存在:
+            self.Tool.cal_record_pos(record_pos=咨询入口位置, resolution=self.移动端.resolution, keystr="资讯入口图标", savepos=True)
         #
         self.Tool.existsTHENtouch(资讯入口图标[0], "资讯入口图标", savepos=True)
-        #
+        sleep(10)
         #
         if self.pocosupport:
             self.poco_exit_id_then_touch(['com.tencent.gamehelper.smoba:id/img_like'])
@@ -528,109 +566,6 @@ class wzyd_libao:
                 return
         return
 
-    def 营地战令经验(self, times=0):
-        #
-        TimeECHO(f"营地战令经验/营地战令任务于2025-04-01被官方下架, return")
-        return True
-        #
-        # 第一次，需要手动点击一下，开启战令
-        if self.Tool.存在同步文件():
-            return True
-        #
-        if times == 0:
-            self.Tool.timelimit(timekey="营地战令经验", limit=60*5, init=True)
-        else:
-            if self.Tool.timelimit(timekey="营地战令经验", limit=60*5, init=False):
-                TimeECHO(f"营地战令经验{times}超时退出")
-                return False
-        #
-        times = times+1
-        TimeECHO(f"营地战令经验{times}")
-        self.APPOB.重启APP(10)
-        sleep(10)
-        if times % 4 == 3:
-            if not connect_status():
-                self.Tool.touch同步文件(self.Tool.独立同步文件)
-                return False
-        if times > 10:
-            return False
-        #
-        if not self.APPOB.前台APP(2):
-            return self.营地战令经验(times)
-        #
-        #
-        if self.pocosupport:
-            if not self.poco_exit_text_then_touch(["游戏"]):
-                return self.营地战令经验(times)
-        else:
-            # 都保存位置,最后进不去再return
-            self.Tool.existsTHENtouch(self.游戏界面图标, "游戏界面图标", savepos=True)
-        sleep(5)
-        # 
-        if self.pocosupport:
-            pass
-            # 暂时没找到从poco进入营地和点击
-        #
-        正式服判断图标 = Template(r"tpl1715609808723.png", record_pos=(-0.217, -0.044), resolution=(540, 960))
-        正式服大头图标 = Template(r"tpl1715610763289.png", record_pos=(-0.281, -0.8), resolution=(540, 960))
-        正式服入口 = False
-        for i in range(5):
-            if exists(正式服判断图标):
-                正式服入口 = True
-                break
-            # 不同的账号，显示的数目不一样多，没办法savepos
-            self.Tool.existsTHENtouch(正式服大头图标, "正式服大头图标", savepos=False)
-        if not 正式服入口:
-            TimeECHO(f"没有找到正式服入口,有可能营地有更新")
-            return self.营地战令经验(times)
-        # 点开工具箱
-        self.Tool.existsTHENtouch(正式服判断图标, "正式服工具图标", savepos=True)
-        sleep(10)
-        战令入口 = Template(r"tpl1715609828196.png", record_pos=(0.209, -0.004), resolution=(540, 960))
-        self.Tool.existsTHENtouch(战令入口, "战令入口", savepos=True)
-        sleep(10)
-        重新登录 = Template(r"tpl1724463208462.png", record_pos=(0.0, -0.035), resolution=(540, 960))
-        if self.Tool.existsTHENtouch(重新登录, "重新登录"):
-            self.Tool.touchfile("重新登录营地战令.txt")
-            return
-        # 
-        战令任务 = []
-        战令任务.append(Template(r"tpl1715609874404.png", record_pos=(-0.25, -0.706), resolution=(540, 960)))
-        战令任务.append(Template(r"tpl1724905564530.png", record_pos=(-0.23, -0.694), resolution=(540, 960)))
-        战令页面元素 = []
-        战令页面元素.append(Template(r"tpl1715609862801.png", record_pos=(0.131, 0.743), resolution=(540, 960)))
-        战令页面元素.append(Template(r"tpl1716804327622.png", record_pos=(0.0, 0.156), resolution=(540, 960)))
-        战令页面元素.append(Template(r"tpl1716804333697.png", record_pos=(0.352, 0.739), resolution=(540, 960)))
-        for i in 战令任务:
-            战令页面元素.append(i)
-        #
-        存在, 战令页面元素 = self.Tool.存在任一张图(战令页面元素, "营地.战令页面元素")
-        # 如果3次都没找到，就不管了，强制点下去
-        if not 存在 and times < 4:
-            sleep(20)
-            存在, 战令页面元素 = self.Tool.存在任一张图(战令页面元素, "营地.战令页面元素")
-            if not 存在:
-                TimeECHO(f"没找到战令页面")
-                return self.营地战令经验(times)
-
-        if "营地.战令任务" not in self.Tool.var_dict.keys():
-            存在, 战令任务 = self.Tool.存在任一张图(战令任务, "营地.战令任务", savepos=True)
-            if not 存在:
-                TimeECHO(f"没找到战令任务页面,按照960x540的分辨率强制点击战令任务")
-                # 这里是绝对坐标，不适用于其他分辨率的情况
-                self.Tool.var_dict["营地.战令任务"] = (148, 108)
-        self.Tool.existsTHENtouch(战令任务[0], "营地.战令任务", savepos=True)
-        sleep(10)
-        一键领取 = Template(r"tpl1715610610922.png", record_pos=(0.337, -0.18), resolution=(540, 960))
-        self.Tool.existsTHENtouch(一键领取, "一键领取战令经验", savepos=True)
-        sleep(5)
-        pos = exists(一键领取)
-        if pos:
-            TimeECHO("仍检测到一键领取战令经验，更新坐标中")
-            self.Tool.var_dict["一键领取战令经验"] = pos
-            self.Tool.existsTHENtouch(一键领取, "一键领取战令经验", savepos=True)
-            sleep(10)
-
     def 体验服礼物(self, times=1):
         #
         """
@@ -663,10 +598,11 @@ class wzyd_libao:
         #
         if self.pocosupport:
             if not self.poco_exit_text_then_touch(["游戏"]):
-                return self.营地战令经验(times)
+                return self.体验服礼物(times)
         else:
             # 都保存位置,最后进不去再return
-            self.Tool.existsTHENtouch(self.游戏界面图标, "游戏界面图标", savepos=True)
+            if not self.Tool.existsTHENtouch(self.游戏入口, "游戏入口", savepos=False):
+                self.Tool.touch_record_pos(record_pos=self.游戏入口.record_pos, resolution=self.移动端.resolution, keystr="游戏入口")
         sleep(5)
         # 判断是否在体验服框架
         # 这里需要提前手动把体验服加到选择界面
@@ -683,8 +619,10 @@ class wzyd_libao:
             TimeECHO(f"没有找到体验服入口,有可能营地有更新")
             return self.体验服礼物(times)
         #
-        奖励兑换图标 = Template(r"tpl1704381904053.png", record_pos=(-0.209, -0.026), resolution=(540, 960))
-        self.Tool.existsTHENtouch(奖励兑换图标, "体验服奖励兑换图标", savepos=True)
+        奖励兑换图标 = Template(r"tpl1704381904053.png", record_pos=(-0.208, -0.023), resolution=(540, 960))
+        if not self.Tool.existsTHENtouch(奖励兑换图标, "体验服奖励兑换图标", savepos=False):
+            self.Tool.touch_record_pos(record_pos=奖励兑换图标.record_pos, resolution=self.移动端.resolution, keystr="体验服奖励兑换图标")
+        #
         sleep(5)
         正在进入 = Template(r"tpl1725004412475.png", record_pos=(-0.004, -0.776), resolution=(540, 960))
         奖励兑换网页图标 = Template(r"tpl1704381965060.png", rgb=True, target_pos=7, record_pos=(0.243, -0.496), resolution=(540, 960))
@@ -710,11 +648,11 @@ class wzyd_libao:
             if not self.Tool.existsTHENtouch(奖励兑换网页图标, "奖励兑换网页图标", savepos=False):
                 return self.体验服礼物(times)
         #
-        # 
+        #
         if self.pocosupport:
             pass
             # 下面的不好弄
-        
+
         # 有时候会让重新登录
         重新登录 = Template(r"tpl1702610976931.png", record_pos=(0.0, 0.033), resolution=(540, 960))
         if self.Tool.existsTHENtouch(重新登录, "重新登录"):
@@ -789,7 +727,9 @@ class wzyd_libao:
         if self.pocosupport:
             self.poco_exit_text_then_touch(["我"])
         else:
-            self.Tool.existsTHENtouch(self.个人界面图标, "WZYD个人界面", savepos=True)
+            if not self.Tool.existsTHENtouch(self.个人入口, "个人入口", savepos=False):
+                self.Tool.touch_record_pos(record_pos=self.个人入口.record_pos, resolution=self.移动端.resolution, keystr="WZYD个人界面")
+
         sleep(10)
         #
         if self.pocosupport:
@@ -800,9 +740,12 @@ class wzyd_libao:
         #
         #
         if self.pocosupport:
-            pass        
+            pass
         sleep(5)
         self.Tool.existsTHENtouch(self.一键领取按钮, "一键领取按钮")
+        sleep(5)
+        self.Tool.touch_record_pos(record_pos=(0.0, 0.77), resolution=self.移动端.resolution, keystr="立即领取")
+        #
         # 新款签到入口
         #
         签到入口 = Template(r"tpl1706339365291.png", target_pos=6, record_pos=(-0.011, -0.185), resolution=(540, 960))
@@ -817,10 +760,10 @@ class wzyd_libao:
 
     def 营地币兑换碎片(self, times=1):
         """
-        20250627 停止维护
+        20251020 停止维护
         """
         TimeECHO(f"营地币兑换碎片{times}")
-        TimeECHO(f"20250627 停止维护")
+        TimeECHO(f"20251020 停止维护")
         #
         if self.Tool.存在同步文件():
             return True
@@ -837,25 +780,29 @@ class wzyd_libao:
             if not connect_status():
                 self.Tool.touch同步文件(self.Tool.独立同步文件)
                 return False
-        if times > 10:
+        if times > 5:
             return False
-        self.APPOB.重启APP(10)
         #
         if not self.APPOB.前台APP(2):
             return self.营地币兑换碎片(times)
         #
+        # 每日签到
+        self.APPOB.重启APP(10)
+        #
+        if self.pocosupport:
+            self.poco_exit_text_then_touch(["我"])
+        else:
+            if not self.Tool.existsTHENtouch(self.个人入口, "个人入口", savepos=False):
+                self.Tool.touch_record_pos(record_pos=self.个人入口.record_pos, resolution=self.移动端.resolution, keystr="个人入口")
+
+        sleep(10)
         #
         if self.pocosupport:
             if not self.poco_exit_text_then_touch(["每日福利"]):
-                return self.每日签到任务(times)
+                return self.营地币兑换碎片(times)
         elif not self.Tool.existsTHENtouch(self.每日福利图标, "WZYD每日福利", savepos=False):
-            return self.每日签到任务(times)
-        sleep(5)
+            return self.营地币兑换碎片(times)
         #
-        #
-        if self.pocosupport:
-            pass
-        self.Tool.existsTHENtouch(self.一键领取按钮, "一键领取按钮")
         # 老款营地币兑换
         if not self.Tool.existsTHENtouch(Template(r"tpl1706338003287.png", record_pos=(0.389, 0.524), resolution=(540, 960)), "营地币兑换"):
             return self.营地币兑换碎片(times)
@@ -881,21 +828,15 @@ class wzyd_libao:
                 break
             else:
                 TimeECHO(f"寻找营地币换碎片中{i}")
-            swipe(pos, vector=[0.0, -0.5])
+            swipe(pos, vector=[0.0, -0.25])
         if not 奖励位置:
             TimeECHO(":没找到营地币")
             return self.营地币兑换碎片(times)
         touch(奖励位置)
+        sleep(10)
         #
-        确定兑换 = Template(r"tpl1699873472386.png", record_pos=(0.163, 0.107), resolution=(540, 960))
-        if not self.Tool.existsTHENtouch(确定兑换):
-            self.Tool.touch_record_pos(确定兑换.record_pos, self.移动端.resolution, f"确定兑换")
-        #
-        再次确定兑换 = Template(r"tpl1733194097335.png", record_pos=(0.007, 0.748), resolution=(540, 960))
-        if not self.Tool.existsTHENtouch(再次确定兑换):
-            self.Tool.touch_record_pos(再次确定兑换.record_pos, self.移动端.resolution, f"再次确定兑换")
-        #
-        self.Tool.existsTHENtouch(Template(r"tpl1699873480797.png", record_pos=(0.163, 0.104), resolution=(540, 960)))
+        self.Tool.touch_record_pos(record_pos=(0.0, 0.77), resolution=self.移动端.resolution, keystr="立即领取")
+        return
 
     def looprun(self, times=0):
         times = times + 1
