@@ -23,7 +23,7 @@ body:
       description: "请在此处描述你遇到的问题"
       value: |
         [此处支持: 填写文本、上传文件、粘贴截图]
-        # 例如
+        例如
         新赛季后，MuMu模拟器的IOS登录方式会封禁账户?
     validations:
       required: true
@@ -33,7 +33,7 @@ body:
       description: "请在此处上传你的执行结果或截图"
       value: |
         [此处支持: 填写文本、上传文件、粘贴截图]
-        # 例如
+        例如
         [11-17 05:00:02]wzry0>控制端(linux)
         [11-17 05:00:02]wzry0>客户端(lin_docker)
         [11-17 05:00:02]wzry0>ADB =(/home/cndaqiang/.local/lib/python3.10/site-packages/airtest/core/android/static/adb/linux/adb)
@@ -47,7 +47,7 @@ body:
       description: "请在此处上传你的执行结果或截图"
       value: |
         [此处支持: 填写文本、上传文件、粘贴截图]
-        # 例如
+        例如
         mynode: 0
         LINK_dict:
             0: Android:///127.0.0.1:5565
@@ -59,7 +59,7 @@ body:
       description: "请在此处填写或上传你的控制文件"
       value: |
         [此处支持: 填写文本、上传文件、粘贴截图]
-        # 例如
+        例如
         self.对战时间=[1.0,23.9]
         self.限时组队时间=23.9
     validations:
