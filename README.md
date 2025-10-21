@@ -15,6 +15,15 @@
 
 [本项目](https://github.com/cndaqiang/autowzry)基于[airtest-mobileauto](https://github.com/cndaqiang/airtest_mobileauto)开发，旨在演示自动化技术。通过图像识别和模拟点击，展示模拟器自动化操作，包括启动模拟器、更新游戏、错误修复、自动对战及礼包领取。本项目重点演示自动化技术在处理重复性任务上的潜力，以及实现7*24h无人值守自动化的方法。目的是为开发者提供技术参考，启发大家探索如何从繁琐的日常操作中解放时间，从而更好地享受生活。
 
+
+
+## 使用说明
+
+* Windows 系统：[演示手册](https://cndaqiang.github.io/wzry.doc/guide/install/)
+* Linux/Mac 仅支持：[源代码运行](https://cndaqiang.github.io/wzry.doc/guide/pyinstall/)
+* 你也不想项目停更吧？那就别白嫖了，点个 ⭐Star 支持一下！
+
+
 ## 重要声明
 
 - 本项目为**免费开源软件**，仅供学习与技术交流使用。
@@ -45,14 +54,6 @@
 > （4）使用游戏同步器（具体包括但不限于使用键盘、鼠标等硬件同步器，以便可以使用一套键盘、鼠标，同时、同步控制多台电脑进行游戏的行为），以及使用其他各种可以让您在游戏效率或收益数据上表现异常的硬件（包括但不限于“连点器”等，以下统称“作弊硬件”）；
 > 
 > ”
-
-
-## 使用说明
-
-* Windows 系统：[演示手册](https://cndaqiang.github.io/wzry.doc/guide/install/)
-* Linux/Mac 仅支持：[源代码运行](https://cndaqiang.github.io/wzry.doc/guide/pyinstall/)
-* 你也不想项目停更吧？那就别白嫖了，点个 ⭐Star 支持一下！
-
 
 ## 致谢
 - 灵感和支持来自以下项目:
