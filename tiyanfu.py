@@ -26,9 +26,31 @@
 import sys
 import os
 import traceback
+import time
+from time import sleep
 
 try:
-    from airtest_mobileauto import *
+    # from airtest_mobileauto import *
+    # 建议将 from airtest_mobileauto import * 替换为以下具体导入:
+    from airtest_mobileauto.control import (
+        Settings,
+        DQWheel,
+        deviceOB,
+        appOB,
+        TimeECHO,
+        TimeErr,
+        fun_name,
+        funs_name,
+        run_class_command,
+        touch,
+        exists,
+        swipe,
+        Template,
+        save_yaml,
+        TaskManager,
+        connect_status,
+        check_requirements
+    )
 except ImportError:
     traceback.print_exc()
     print("模块 [airtest_mobileauto] 导入不存在，请安装 airtest_mobileauto")
@@ -110,27 +132,36 @@ class tiyanfu():
         # ------------------------------------------------------------------------------
         # 修正分辨率, 避免某些模拟器返回的分辨率不对
         if self.移动端.resolution[0] < self.移动端.resolution[1]:
-            TimeECHO("=>"*20)
-            TimeECHO(f"⚠️ 警告: 分辨率 ({ self.移动端.resolution}) 不符合 (宽, 高) 格式，正在修正...")
             self.移动端.resolution = (max(self.移动端.resolution), min(self.移动端.resolution))
-            TimeECHO("<="*20)
+        self.分辨率16v9 = abs(self.移动端.resolution[0]/self.移动端.resolution[1] - 1.77) < 0.1
+        if self.移动端.resolution[0] != 960 or self.移动端.resolution[1] != 540:
+            TimeECHO(f"分辨率 {self.移动端.resolution} 不是推荐的 (960, 540), 建议修改模拟器设置")
+            if not self.分辨率16v9:
+                TimeECHO("=>"*20)
+                TimeECHO(f"⚠  警告: 分辨率 {self.移动端.resolution} 不是 16:9, 程序无法正常工作")
+                TimeECHO("<="*20)
         #
-        极简下载 = Template(r"tpl1723551085244.png", record_pos=(-0.008, -0.096), resolution=(960, 540), target_pos=6)
-        确定按钮 = Template(r"tpl1723551187946.png", record_pos=(-0.003, 0.122), resolution=(960, 540))
-        if self.Tool.existsTHENtouch(极简下载, "极简下载", savepos=False):
-            self.Tool.existsTHENtouch(确定按钮, "确定按钮", savepos=False)
-            sleep(waittime)
-        if self.Tool.existsTHENtouch(确定按钮, "确定按钮", savepos=False):
-            sleep(waittime)
+        # 大版本更新界面
+        # 即使没有点击也没事, 会自动更新, 真的有此界面, 下面的按钮没带的急点击, app就自动更新了
+        极简下载 = Template(r"tpl1723551085244.png", record_pos=(-0.178, -0.104), resolution=(960, 540))
+        确定按钮 = Template(r"tpl1723551187946.png", record_pos=(-0.007, 0.122), resolution=(960, 540))
+        if not self.Tool.existsTHENtouch(极简下载, "极简下载", savepos=False):
+            self.Tool.touch_record_pos(record_pos=极简下载.record_pos, resolution=self.移动端.resolution, keystr="位置.极简下载")
+        sleep(waittime)
+        if not self.Tool.existsTHENtouch(确定按钮, "确定按钮", savepos=False):
+            self.Tool.touch_record_pos(record_pos=确定按钮.record_pos, resolution=self.移动端.resolution, keystr="位置.确定按钮")
+        sleep(waittime)
         #
+        # 小版本更新界面
         退出更新图标 = Template(r"tpl1723551006031.png", record_pos=(-0.036, 0.196), resolution=(960, 540))
-        更新图标 = Template(r"tpl1723551024328.png", record_pos=(0.059, 0.199), resolution=(960, 540))
         if exists(退出更新图标):
             TimeECHO("检测到更新图标")
-            self.Tool.existsTHENtouch(更新图标, "更新图标", savepos=True)
+            self.Tool.touch_record_pos(record_pos=(0.058, 0.199), resolution=self.移动端.resolution, keystr="更新位置")
             sleep(waittime)
-        self.Tool.existsTHENtouch(更新图标, "更新图标", savepos=False)
-        # 更新中
+        elif times % 3 == 1:
+            self.Tool.touch_record_pos(record_pos=(0.058, 0.199), resolution=self.移动端.resolution, keystr="强制点击更新位置")
+        #
+        # 更新过程中
         更新中 = Template(r"tpl1723959879694.png", record_pos=(-0.358, 0.244), resolution=(960, 540))
         if exists(更新中):
             TimeECHO("正在更新中....")
@@ -140,19 +171,24 @@ class tiyanfu():
         if self.Tool.existsTHENtouch(确定重启, "体验服.确定重启", savepos=False):
             TimeECHO("确定重启")
             sleep(waittime)
+        #
+        # 重新安装apk界面
         # 不同版本的安卓、不同模拟器的安装界面区别较大，仅对MuMu进行适配
         # MuMu模拟器的安装元素
         王者图标 = Template(r"tpl1730462743001.png", record_pos=(-0.218, -0.049), resolution=(960, 540))
-        更新按钮 = Template(r"tpl1724936646196.png", record_pos=(0.209, 0.051), resolution=(960, 540))
-        self.安装元素 = [王者图标, 更新按钮]
-
-        安装界面, self.安装元素 = self.Tool.存在任一张图(self.安装元素, "体验服.安装元素")
+        更新按钮 = Template(r"tpl1724936646196.png", record_pos=(0.229, 0.08), resolution=(960, 540))
+        安装元素 = [王者图标, 更新按钮]
+        # MuMu高清分辨率安装界面
+        安装元素.append(Template(r"tpl1761110999082.png", record_pos=(-0.239, -0.074), resolution=(1920, 1080)))
+        #
+        安装界面, 安装元素 = self.Tool.存在任一张图(安装元素, "体验服.安装元素")
         if 安装界面:
             if self.Tool.existsTHENtouch(更新按钮, f"体验服.更新按钮", savepos=False):
                 sleep(waittime)
                 self.APPOB.重启APP()
         # 体验服随便点无所谓 不用追求太逻辑和完美，就直接点以前的更新坐标
         self.Tool.touch_record_pos(更新按钮.record_pos, self.移动端.resolution, keystr=f"体验服.更新按钮")
+        #
         #
         # 更新界面的关闭按钮
         关闭界面 = Template(r"tpl1723551215061.png", record_pos=(0.323, -0.202), resolution=(960, 540))
@@ -161,6 +197,7 @@ class tiyanfu():
             self.Tool.existsTHENtouch(关闭按钮, "关闭按钮", savepos=True)
         self.Tool.existsTHENtouch(关闭按钮, "其他关闭按钮", savepos=False)
         #
+        # 检测账号是否在线
         self.登录元素 = []
         self.登录元素.append(Template(r"tpl1723551454028.png", record_pos=(0.0, -0.005), resolution=(960, 540)))
         self.登录元素.append(Template(r"tpl1723960220809.png", record_pos=(-0.002, 0.128), resolution=(960, 540)))
@@ -176,13 +213,14 @@ class tiyanfu():
         self.Tool.existsTHENtouch(确定协议, "确定协议", savepos=False)
         self.Tool.existsTHENtouch(同意协议, "同意协议", savepos=False)
         #
+        # 登录账号, 进入大厅则结束
         # 现在打开可能会放一段视频，这个随意点击也为了让界面换一下
         self.Tool.touch_record_pos(record_pos=(1, 1), resolution=self.移动端.resolution, keystr=f"{fun_name(1)}.屏幕中心")
-        sleep(10)
-        #
+        sleep(waittime)
         登录界面开始游戏图标 = Template(r"tpl1692947242096.png", record_pos=(-0.004, 0.158), resolution=(960, 540), threshold=0.9)
-        if self.Tool.existsTHENtouch(登录界面开始游戏图标, "登录界面开始游戏图标", savepos=False):
-            sleep(waittime)
+        if not self.Tool.existsTHENtouch(登录界面开始游戏图标, "登录界面开始游戏图标", savepos=False):
+            self.Tool.touch_record_pos(record_pos=登录界面开始游戏图标.record_pos, resolution=self.移动端.resolution, keystr=f"强制登录界面开始游戏图标")
+        sleep(waittime)
         if self.Tool.existsTHENtouch(登录界面开始游戏图标, "登录界面开始游戏图标", savepos=False):
             TimeECHO("还存在开始游戏，有可能体验服正在更新")
             return self.run(times)
@@ -196,24 +234,30 @@ class tiyanfu():
         #
         # 进入游戏大厅偶尔会有关闭按钮
         self.Tool.LoopTouch(关闭按钮, "关闭按钮", loop=5, savepos=False)
+        关闭pos = [(0.236, -0.14), (0.431, -0.203)]
+        for i in range(3):
+            for record_pos in 关闭pos:
+                self.Tool.touch_record_pos(record_pos=record_pos, resolution=self.移动端.resolution, keystr="强制关闭按钮")
+                sleep(1)
+                self.Tool.touch_record_pos(record_pos=record_pos, resolution=self.移动端.resolution, keystr="强制关闭按钮")
+                sleep(1)
         # 避免点多了, 如果有返回就返回一下
         返回图标 = Template(r"tpl1692949580380.png", record_pos=(-0.458, -0.25), resolution=(960, 540), threshold=0.9)
         self.Tool.LoopTouch(返回图标, "返回图标", loop=3, savepos=False)
         #
-        self.大厅元素 = []
-        self.大厅元素.append(Template(r"tpl1723551269026.png", record_pos=(0.455, 0.203), resolution=(960, 540)))
-        self.大厅元素.append(Template(r"tpl1723551299495.png", record_pos=(-0.461, -0.249), resolution=(960, 540)))
-        self.大厅元素.append(Template(r"tpl1723551309461.png", record_pos=(0.354, -0.252), resolution=(960, 540)))
-        大厅中, self.大厅元素 = self.Tool.存在任一张图(self.大厅元素, "体验服.大厅元素")
-        大厅对战图标 = Template(r"tpl1723219359665.png", record_pos=(-0.122, 0.133), resolution=(960, 540))
-        进入5v5匹配 = Template(r"tpl1689666019941.png", record_pos=(0.331, 0.049), resolution=(960, 540))
+        大厅对战图标 = Template(r"tpl1723219359665.png", record_pos=(-0.1, 0.14), resolution=(960, 540))
+        位置大厅个人 = Template(r"tplautowzrylog.png", record_pos=(-0.48, -0.249), resolution=(960, 540))
+        个人中心界面 = Template(r"tpl1760076470377.png", record_pos=(-0.452, 0.059), resolution=(960, 540))
+        大厅元素 = []
+        大厅元素.append(大厅对战图标)
+        大厅中, 大厅元素 = self.Tool.存在任一张图(大厅元素, "体验服.大厅元素")
         if 大厅中:
             return True
         else:
-            # 万一大厅更新, 点击进人机界面看看
-            if self.Tool.existsTHENtouch(大厅对战图标, "大厅对战", savepos=True):
-                if exists(进入5v5匹配):
-                    return True
+            # 万一大厅更新, 点击进个人界面试试
+            self.Tool.touch_record_pos(record_pos=位置大厅个人.record_pos, resolution=self.移动端.resolution, keystr="位置大厅个人")
+            if exists(个人中心界面):
+                return True
             return self.run(times)
 
     def looprun(self, times=0):
