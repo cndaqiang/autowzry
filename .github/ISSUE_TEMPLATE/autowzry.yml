@@ -1,6 +1,6 @@
 name: 为了快速解决你遇到的问题, 请使用此模板进行提问
 description: 运行autowzry过程遇到的各种问题
-title: "[windows][MuMu模拟器][问题描述]"
+title: "[MuMu模拟器][问题描述]"
 labels: ["模拟器","对战","礼包","组队","源码运行"]
 body:
   - type: checkboxes
