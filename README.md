@@ -13,8 +13,7 @@
 
 ## 项目简介
 
-[本项目](https://github.com/cndaqiang/autowzry)基于[airtest-mobileauto](https://github.com/cndaqiang/airtest_mobileauto)开发，旨在演示自动化技术。通过图像识别和模拟点击，展示模拟器自动化操作，包括启动模拟器、更新游戏、错误修复、自动对战及礼包领取。本项目重点演示自动化技术在处理重复性任务上的潜力，以及实现7*24h无人值守自动化的方法。目的是为开发者提供技术参考，启发大家探索如何从繁琐的日常操作中解放时间，从而更好地享受生活。
-
+[本项目](https://github.com/cndaqiang/autowzry) 基于 [airtest-mobileauto](https://github.com/cndaqiang/airtest_mobileauto) 开发，**为免费开源项目，仅供研究与学习用途**。通过图像识别与模拟点击，本项目展示了自动化流程的逻辑设计与实现，包括启动模拟器、更新游戏、自动对战及礼包领取等模块，实现了 7×24h 无人值守的自动化架构。
 
 
 ## 使用说明
@@ -26,7 +25,6 @@
 
 ## 重要声明
 
-- 本项目为**免费开源软件**，仅供学习与技术交流使用。
 - 本项目无任何交流群组，请在[GitHub](https://github.com/cndaqiang/autowzry)交流。
 - 本项目仅进行画面识别和模拟触摸操作，不读取、篡改任何游戏数据。
 - 请严格遵守相关**游戏服务协议**与**法律法规**，禁止将本项目用于任何违反游戏协议或法律的行为。
