@@ -1,6 +1,6 @@
 name: 为了快速解决你遇到的问题, 请使用此模板进行提问
 description: 运行autowzry过程遇到的各种问题
-title: "[windows][MuMu模拟器][问题描述]"
+title: "[MuMu模拟器][问题描述]"
 labels: ["模拟器","对战","礼包","组队","源码运行"]
 body:
   - type: checkboxes
@@ -22,9 +22,7 @@ body:
       label: "简单描述你的问题"
       description: "请在此处描述你遇到的问题"
       value: |
-        [此处支持: 填写文本、上传文件、粘贴截图]
-        例如
-        新赛季后，MuMu模拟器的IOS登录方式会封禁账户?
+        例如,新赛季后，MuMu模拟器的IOS登录方式会封禁账户?
     validations:
       required: true
   - type: textarea
@@ -32,13 +30,7 @@ body:
       label: "上传完整的运行日志result.0.txt"
       description: "请在此处上传你的执行结果或截图"
       value: |
-        [此处支持: 填写文本、上传文件、粘贴截图]
-        例如
-        [11-17 05:00:02]wzry0>控制端(linux)
-        [11-17 05:00:02]wzry0>客户端(lin_docker)
-        [11-17 05:00:02]wzry0>ADB =(/home/cndaqiang/.local/lib/python3.10/site-packages/airtest/core/android/static/adb/linux/adb)
-        [11-17 05:00:02]wzry0>LINK(Android:///127.0.0.1:5555)
-        [11-17 05:00:02]wzry0>LINKhead(Android:///127.0.0.1)
+        此处支持: 填写文本、上传文件、粘贴截图
     validations:
       required: true
   - type: textarea
@@ -46,11 +38,7 @@ body:
       label: "上传配置文件: config.example.yaml"
       description: "请在此处上传你的执行结果或截图"
       value: |
-        [此处支持: 填写文本、上传文件、粘贴截图]
-        例如
-        mynode: 0
-        LINK_dict:
-            0: Android:///127.0.0.1:5565
+        此处支持: 填写文本、上传文件、粘贴截图
     validations:
       required: true
   - type: textarea
@@ -58,10 +46,7 @@ body:
       label: "上传控制文件: WZRY.0.运行模式.txt"
       description: "请在此处填写或上传你的控制文件"
       value: |
-        [此处支持: 填写文本、上传文件、粘贴截图]
-        例如
-        self.对战时间=[1.0,23.9]
-        self.限时组队时间=23.9
+        此处支持: 填写文本、上传文件、粘贴截图
     validations:
       required: true
   - type: textarea
@@ -69,16 +54,10 @@ body:
       label: "粘贴运行目录截图"
       description: "请截图运行目录并粘贴到此处"
       value: |
-        [此处支持: 填写文本、上传文件、粘贴截图]
+        粘贴截图
   - type: textarea
     attributes:
       label: "模拟器设置截图"
       description: "如果问题不涉及模拟器, 可以不填写此输入框."
       value: |
-        [此处支持: 填写文本、上传文件、粘贴截图]
-        如果你涉及到连接不了模拟器，无法控制模拟器的问题，请在此处粘贴你的模拟器设置页面.
-        需要确定你开启了ADB以及ADB的端口以及分辨率和dpi的设置.
-        非`960x540`分辨率`dpi=160`的设备, 请自行解决.
-        模拟器的安装路径, 多开页面截图等
-        例如这个截图就非常充分
-        ![image](https://github.com/user-attachments/assets/ce5ca8ce-c1a2-4ac0-a2e3-e1b3ad74f5e0)
+        粘贴截图
